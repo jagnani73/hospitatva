@@ -8,7 +8,7 @@ scilla_version 0
 (*               Associated library                *)
 (***************************************************)
 
-library MyContractLib
+library HospitatvaPriceList
 
 
 (* Library code block follows *)
@@ -19,12 +19,11 @@ library MyContractLib
 (*             Contract definition                 *)
 (***************************************************)
 
-contract MyContract
+contract HospitatvaPriceList
 
 (* Immutable fields declaration *)
 
-(vname_1 : vtype_1,
- vname_2 : vtype_2)
+()
 
 (* Mutable fields declaration *)
 
