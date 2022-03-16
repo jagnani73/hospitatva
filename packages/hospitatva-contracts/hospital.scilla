@@ -1,0 +1,46 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+
+library MyContractLib
+
+
+(* Library code block follows *)
+
+
+
+(***************************************************)
+(*             Contract definition                 *)
+(***************************************************)
+
+contract MyContract
+
+(* Immutable fields declaration *)
+
+(vname_1 : vtype_1,
+ vname_2 : vtype_2)
+
+(* Mutable fields declaration *)
+
+field vname_1 : vtype_1 = init_val_1
+field vname_2 : vtype_2 = init_val_2
+
+(* Transitions *)
+
+
+(* Transition signature *)
+transition firstTransition (param_1 : type_1, param_2 : type_2)
+  (* Transition body *)
+
+end
+
+transition secondTransition (param_1: type_1)
+  (* Transition body *)
+
+end
