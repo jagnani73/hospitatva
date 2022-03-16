@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,7 +7,7 @@
 html,
 body,
 #__next {
-  @apply p-0 m-0;
+  @apply m-0 p-0 font-serif;
 }
 
 * {

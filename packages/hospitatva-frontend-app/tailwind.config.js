@@ -13,6 +13,9 @@ module.exports = {
           accent: "#8DC956",
         },
       },
+      fontFamily: {
+        serif: ["Inter", "Montserrat", "sans-serif"],
+      },
     },
   },
   plugins: [],
