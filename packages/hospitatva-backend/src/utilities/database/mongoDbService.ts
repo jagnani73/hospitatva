@@ -54,3 +54,18 @@ export const addIndexedBlockToMongoDb = async (
     .collection("indexed-blocks")
     .insertOne({ blockNumber, data });
 };
+
+export const checkExisitngUser = async (
+  did: string,
+  publicAddress: string,
+  email: string
+) => {
+  const existingUser = await (await getDatabase())
+    .collection("magic-users")
+    .findOne({ email });
+  if (existingUser === null) {
+    await (await getDatabase())
+      .collection("magic-users")
+      .insertOne({ did, publicAddress, email });
+  }
+};
