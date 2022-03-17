@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Magic } from "magic-sdk";
 
 import { SummaryProps } from "../../utils/interfaces/summary";
@@ -12,11 +11,8 @@ const Summary = ({
   patient,
   summary_id,
 }: SummaryProps) => {
-  const [loading, setLoading] = useState<boolean>();
-
   const handlePayment = async () => {
     try {
-      setLoading(true);
       const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_API_KEY!);
       const token = await magic.auth.loginWithMagicLink({
         email: patient.email,
@@ -29,7 +25,6 @@ const Summary = ({
       }
     } catch (err) {
     } finally {
-      setLoading(false);
     }
   };
 
