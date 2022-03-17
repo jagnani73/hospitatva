@@ -1,32 +1,19 @@
 import { HospitalProps } from "../../utils/interfaces/hospital";
 import { Map } from "./";
-import { Button, Header, Input, Modal } from "../shared";
-import { useState } from "react";
-import { COMMODITIES } from "../../utils/constants";
+import { Header } from "../shared";
 
 const Hero = ({
   name,
   address,
   marker,
   commodities,
-  contract_address,
   specialists,
 }: HospitalProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState(0);
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
   return (
     <section className="mx-auto w-10/12 pt-44">
-      <div className="flex items-end justify-between">
-        <Header type="primary" tagline={address.join(", ")}>
-          {name}
-        </Header>
-        <Button onClick={() => setIsOpen(true)}>Book</Button>
-      </div>
+      <Header type="primary" tagline={address.join(", ")}>
+        {name}
+      </Header>
 
       <div className="mx-auto mt-10 flex items-start justify-between">
         <div>
@@ -70,44 +57,6 @@ const Hero = ({
           ))}
         </tbody>
       </table>
-      <Modal
-        enterAnimation="fade-bottom"
-        exitAnimation="fade-top"
-        classNames={{
-          header:
-            "!bg-gradient-to-r !from-patient-accent !to-green-600 text-white",
-          content: "!bg-white",
-        }}
-        titleElement={<h2 className="font-semibold ">Book Commodities</h2>}
-        isOpen={isOpen}
-        onClose={handleClose}
-      >
-        {step === 0 && (
-          <>
-            <h3 className="text-lg font-semibold">Add Commodities</h3>
-
-            {/* <Input
-              name="commodities"
-              id="commodity-selector"
-              type="select"
-              placeholder="Select a commodity"
-              choices={Object.keys(COMMODITIES).map((c) => ({
-                text: c,
-                value: c,
-              }))}
-            /> */}
-          </>
-        )}
-
-        {step === 1 && <h3 className="text-lg font-semibold">Summary</h3>}
-        {step === 2 && (
-          <h3 className="text-lg font-semibold">Add Commodities</h3>
-        )}
-        <footer className="mt-6 flex items-center justify-between">
-          <Button size="small">Prev</Button>
-          <Button size="small">Next</Button>
-        </footer>
-      </Modal>
     </section>
   );
 };
