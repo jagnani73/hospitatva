@@ -8,8 +8,8 @@
     "build": "sst build",
     "deploy": "sst deploy",
     "remove": "sst remove",
-    "aws:start": "export AWS_SDK_LOAD_CONFIG=1 && export AWS_PROFILE=gitasih && yarn sst start --profile sih-22-dev",
-    "aws:deploy": "export AWS_SDK_LOAD_CONFIG=1 && export AWS_PROFILE=gitasih && yarn sst deploy --profile sih-22-dev"
+    "aws:start": "export AWS_SDK_LOAD_CONFIG=1 && export AWS_PROFILE=gitasih && yarn sst start --stage sih-22-dev",
+    "aws:deploy": "export AWS_SDK_LOAD_CONFIG=1 && export AWS_PROFILE=gitasih && yarn sst deploy --stage sih-22-dev"
   },
   "eslintConfig": {
     "extends": [
@@ -17,13 +17,17 @@
     ]
   },
   "devDependencies": {
+    "@serverless-stack/cli": "0.69.0",
+    "@serverless-stack/resources": "0.69.0",
     "@tsconfig/node14": "^1.0.1",
     "@types/aws-lambda": "^8.10.70",
     "@types/node": "<15.0.0",
-    "typescript": "4.4.4",
-    "@serverless-stack/cli": "0.69.0",
-    "@serverless-stack/resources": "0.69.0",
-    "aws-cdk-lib": "2.15.0"
+    "aws-cdk-lib": "2.15.0",
+    "typescript": "4.4.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@zilliqa-js/zilliqa": "^3.3.4",
+    "aws-sdk": "^2.1095.0",
+    "nanoid": "^3.3.1"
+  }
 }
