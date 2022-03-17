@@ -20,6 +20,7 @@ type ContractErrors =
     | NotPausedError
     | PausedError
     | NotOwnerError
+    | ItemDoesNotExist
 
 let create_pair =
 fun(name: String) =>
@@ -39,6 +40,7 @@ let throw_err =
                 | NotPausedError => Int32 -1
                 | PausedError => Int32 -2
                 | NotOwnerError => Int32 -3
+                | ItemDoesNotExist => Int32 -4
              end
         in
         { _exception: "Error"; code: error_code }
@@ -106,26 +108,37 @@ procedure IncrementItemCount()
   item_count := updated_count
 end
 
+procedure CheckIdExists(id: Uint256)
+  check_if_id_exists <- exists price_list[id];
+  match check_if_id_exists with
+    | True =>
+    | False =>
+      error = ItemDoesNotExist;
+      Throw error
+   end
+end
+
 procedure AddListingToState(listing: Pair String Uint256)
   index <- item_count;
   price_list[index] := listing
 end
 
-
-
+procedure RemoveListingFromState(id: Uint256)
+  delete price_list[id]
+end
 
 (* Transitions *)
 
+(* Adds listing to the state *)
 
-(* Transition signature *)
 transition AddItem (listing_data_name: String, listing_data_price: Uint256)
-  (* Transition body *)
   RequireNotPaused;
   RequireOwner;
   listing_data_pair = create_pair listing_data_name listing_data_price;
   IncrementItemCount;
   AddListingToState listing_data_pair;
   index <- item_count;
+
   e = {
     _eventname: "AddItem";
     data_inserted: listing_data_pair;
@@ -133,23 +146,51 @@ transition AddItem (listing_data_name: String, listing_data_price: Uint256)
   };
   event e
 end
-(* Transition signature *)
-transition RemoveItem ()
-  (* Transition body *)
 
+(* Removes listing from the state *)
+
+transition RemoveItem (listing_id: Uint256)
+  RequireNotPaused;
+  RequireOwner;
+  CheckIdExists listing_id;
+  RemoveListingFromState listing_id;
+
+  e = {
+    _eventname: "RemoveItem";
+    removed_id: listing_id
+  };
+  event e
 end
 (* Transition signature *)
 transition UpdateItem ()
   (* Transition body *)
 
 end
-(* Transition signature *)
-transition Pause ()
-  (* Transition body *)
 
+(* Pauses the contract as a circuit-breaker mechanism. *)
+
+transition Pause()
+    RequireNotPaused;
+    RequireOwner;
+    paused := true;
+
+    e = {
+        _eventname: "Pause";
+        paused: true
+    };
+    event e
 end
-(* Transition signature *)
-transition Unpause ()
-  (* Transition body *)
 
+(* Unpauses the contract. *)
+
+transition Unpause()
+    RequirePaused;
+    RequireOwner;
+    paused := false;
+
+    e = {
+        _eventname: "Unpause";
+        paused: false
+    };
+    event e
 end
