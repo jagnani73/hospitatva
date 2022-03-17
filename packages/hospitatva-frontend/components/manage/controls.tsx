@@ -25,8 +25,8 @@ const Controls = ({
           <path
             d="M7.99996 14V8.33335M7.99996 8.33335V2.66669M7.99996 8.33335H13.3333M7.99996 8.33335H2.66663"
             stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
+            strokeWidth="2"
+            strokeLinecap="round"
           />
         </svg>
         Add
