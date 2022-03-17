@@ -9,7 +9,7 @@ const Hero = ({ hospitals }: HeroProps) => {
 
       <div className="grid grid-cols-4 gap-16">
         {hospitals.map((hospital) => (
-          <Card key={hospital.name} {...hospital} />
+          <Card key={hospital.contract_address} {...hospital} />
         ))}
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { COMMODITIES } from "../constants";
 
 export interface CardProps {
+  contract_address: string;
   name: string;
   address: [string, string, string];
   commodities: COMMODITIES[];
