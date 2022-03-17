@@ -4,7 +4,7 @@ import { CardProps } from "../../utils/interfaces/home";
 
 const Card = ({ address, commodities, name, contract_address }: CardProps) => {
   return (
-    <Link href="">
+    <Link href={`/hospital/${contract_address}`}>
       <a>
         <article className="h-full rounded-lg border-2 border-patient-accent px-4 py-2 text-lg shadow-sm">
           <h3 className="font-semibold">{name}</h3>

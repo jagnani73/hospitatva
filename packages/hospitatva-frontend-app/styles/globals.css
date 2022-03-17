@@ -7,7 +7,7 @@
 html,
 body,
 #__next {
-  @apply m-0 bg-patient-primary p-0 font-serif;
+  @apply m-0 bg-patient-primary p-0 font-serif z-0;
 }
 
 * {

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { HeroProps } from "../../utils/interfaces/home";
 import { Header } from "../shared";
 import { Card } from "./";

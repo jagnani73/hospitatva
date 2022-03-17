@@ -7,8 +7,8 @@ const Header = ({ type, children, tagline }: HeaderProps) => {
       return (
         <div className="flex items-end">
           <div>
-            <h1 className="text-4xl font-semibold">{children}</h1>
-            {tagline && <h2 className="text-3xl">{tagline}</h2>}
+            <h1 className="text-3xl font-semibold">{children}</h1>
+            {tagline && <h2 className="text-xl">{tagline}</h2>}
           </div>
         </div>
       );

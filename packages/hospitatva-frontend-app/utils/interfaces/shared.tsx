@@ -1,3 +1,5 @@
+import { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+
 export interface HeaderProps {
   type: "primary" | "secondary";
   children: React.ReactNode;
@@ -93,10 +95,13 @@ export type ModalProps = {
   enterAnimation?: ModalAnimationTypes;
   exitAnimation?: ModalAnimationTypes;
   onClose: () => void;
+  classNames?: { body?: string; header?: string; content?: string };
 };
 
-export interface ButtonProps {
-  children: React.ReactNode;
-  onClick?: (e: React.MouseEvent) => void;
-  className?: string;
+export interface ButtonProps
+  extends DetailedHTMLProps<
+    ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
+  size?: "normal" | "small";
 }

@@ -15,19 +15,19 @@ export const Hospitals: CardProps[] = [
     commodities: [COMMODITIES.BEDS, COMMODITIES.OXYGEN_CYLINDERS],
   },
   {
-    contract_address: " officia",
+    contract_address: "officia",
     name: "Appaulo",
     address: ["12/7", "ABC Street", "Navi Mumbai"],
     commodities: [COMMODITIES.BEDS, COMMODITIES.OXYGEN_CYLINDERS],
   },
   {
-    contract_address: " voluptate",
+    contract_address: "voluptate",
     name: "Appaulo",
     address: ["12/7", "ABC Street", "Navi Mumbai"],
     commodities: [COMMODITIES.BEDS, COMMODITIES.OXYGEN_CYLINDERS],
   },
   {
-    contract_address: " duis",
+    contract_address: "duis",
     name: "Appaulo",
     address: ["12/7", "ABC Street", "Navi Mumbai"],
     commodities: [COMMODITIES.BEDS, COMMODITIES.OXYGEN_CYLINDERS],
