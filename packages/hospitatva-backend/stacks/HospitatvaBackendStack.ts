@@ -68,8 +68,10 @@ export default class HospitatvaBackendStack extends sst.Stack {
 
     const indexerCron = new sst.Cron(this, "Hospitatva-Indexer-Cron", {
       job: "src/indexer/indexerCronJob.indexBlocksByTime",
-      schedule: Duration.seconds(30),
+      schedule: "cron(0/1 * * * ? *)",
     });
+
+    indexerCron.attachPermissions([ssmIamPermission]);
 
     // Create a DynamoDB table for the nonce storage
     const nonceTable = new sst.Table(

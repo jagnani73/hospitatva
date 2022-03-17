@@ -51,7 +51,7 @@ export const updateLastIndexedBlock = async (blockNum: number) => {
     .collection("indexed-blocks")
     .insertOne({
       blockNumber: +blockNum,
-      data: {},
+      timeIndexed: new Date().toISOString(),
     });
   if (!result.insertedId)
     throw {
