@@ -22,7 +22,7 @@ export default class HospitatvaBackendStack extends sst.Stack {
     });
 
     // Create a DynamoDB table array for products
-    let tableArray: Array<sst.Table> = [];
+    const tableArray: Array<sst.Table> = [];
 
     for (let i = 0; i < inventoryArray.length; i++) {
       tableArray.push(

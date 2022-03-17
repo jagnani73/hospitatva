@@ -29,14 +29,12 @@ const getDatabase = async () => {
 };
 
 export const getLastIndexedBlock = async () => {
-  const lastIndexedBlock = (
-    await (await getDatabase())
-      .collection("indexed-blocks")
-      .find<IndexedBlock>({})
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray()
-  )[0];
+  const lastIndexedBlock = await (await getDatabase())
+    .collection("indexed-blocks")
+    .find<IndexedBlock>({})
+    .sort({ blockNumber: -1 })
+    .limit(1)
+    .toArray()[0];
   if (!lastIndexedBlock)
     throw {
       isCustom: true,
@@ -44,4 +42,20 @@ export const getLastIndexedBlock = async () => {
       message: "Could not fetch last indexed block from MongoDB",
     };
   return lastIndexedBlock;
+};
+
+export const updateLastIndexedBlock = async (blockNum: number) => {
+  const result = await (await getDatabase())
+    .collection("indexed-blocks")
+    .insertOne({
+      blockNumber: +blockNum,
+      data: {},
+    });
+  if (!result.insertedId)
+    throw {
+      isCustom: true,
+      statusCode: 500,
+      message: "Could not insert last indexed block into MongoDB",
+    };
+  return result.insertedId;
 };

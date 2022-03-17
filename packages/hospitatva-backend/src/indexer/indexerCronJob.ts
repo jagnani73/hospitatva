@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { getLastIndexedBlock } from "../utilities/database/mongoDbService";
 import { rpcCall } from "../utilities/indexer/executeRpcCall";
+import { indexAndStoreByBlockNum } from "../utilities/indexer/indexByBlockNumber";
 
 export const indexBlocksByTime = async (event: any) => {
   try {
@@ -21,6 +22,8 @@ export const indexBlocksByTime = async (event: any) => {
     let toIndex = lastIndexedBlock.blockNumber + 1;
     while (toIndex <= latestBlockNumInt) {
       console.log("Currently Indexing:", toIndex);
+      await indexAndStoreByBlockNum(toIndex);
+      toIndex++;
     }
   } catch (error) {
     return console.error(JSON.stringify(error));
