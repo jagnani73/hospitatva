@@ -1,6 +1,7 @@
 export interface HeaderProps {
   type: "primary" | "secondary";
   children: React.ReactNode;
+  tagline?: string;
 }
 
 export interface Validation {

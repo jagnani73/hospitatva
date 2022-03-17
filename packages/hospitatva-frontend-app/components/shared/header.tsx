@@ -1,9 +1,14 @@
 import { HeaderProps } from "../../utils/interfaces/shared";
 
-const Header = ({ type, children }: HeaderProps) => {
+const Header = ({ type, children, tagline }: HeaderProps) => {
   switch (type) {
     case "primary": {
-      return <h1>{children}</h1>;
+      return (
+        <>
+          <h1>{children}</h1>
+          {tagline && <h2>{tagline}</h2>}
+        </>
+      );
     }
     case "secondary": {
       return (
