@@ -1,0 +1,213 @@
+(***************************************************)
+(*                 Scilla version                  *)
+(***************************************************)
+
+scilla_version 0
+import BoolUtils ListUtils IntUtils
+
+(***************************************************)
+(*               Associated library                *)
+(***************************************************)
+
+library HospitatvaPriceList
+
+
+(* Library code block follows *)
+let true = True
+let false = False
+let one = Uint256 1
+type ContractErrors = 
+    | NotPausedError
+    | PausedError
+    | NotOwnerError
+    | ItemDoesNotExist
+
+let create_pair =
+fun(name: String) =>
+fun(price: Uint256) =>
+    let prc = price in
+    Pair {String Uint256} name prc
+
+let one_msg = 
+  fun (msg: Message) => 
+    let nil_msg = Nil {Message} in
+    Cons {Message} msg nil_msg
+
+let throw_err =
+    fun (err : ContractErrors) => 
+        let error_code =
+            match err with
+                | NotPausedError => Int32 -1
+                | PausedError => Int32 -2
+                | NotOwnerError => Int32 -3
+                | ItemDoesNotExist => Int32 -4
+             end
+        in
+        { _exception: "Error"; code: error_code }
+
+(***************************************************)
+(*             Contract definition                 *)
+(***************************************************)
+
+contract HospitatvaPriceList
+
+(* Immutable fields declaration *)
+
+(
+  initial_contract_owner: ByStr20
+)
+
+(* Mutable fields declaration *)
+
+field contract_owner : ByStr20 = initial_contract_owner
+field item_count : Uint256 = Uint256 0
+field price_list : Map Uint256 (Pair String Uint256) = Emp Uint256 (Pair String Uint256)
+field paused: Bool = False 
+
+(* Procedures *)
+
+procedure Throw(error: ContractErrors)
+    e = throw_err error;
+    throw e
+end
+
+procedure RequireOwner()
+    curr_owner <- contract_owner;
+    is_contract_owner = builtin eq curr_owner _sender;
+    match is_contract_owner with
+        | True =>
+        | False =>
+            error = NotOwnerError;
+            Throw error
+    end
+end
+
+procedure RequireNotPaused()
+    is_paused <- paused;
+    match is_paused with
+        | False =>
+        | True =>
+            error = PausedError;
+            Throw error
+    end      
+end
+
+procedure RequirePaused()
+  is_paused <- paused;
+  match is_paused with
+  | True =>
+  | False =>
+    error = NotPausedError;
+    Throw error
+  end
+end
+
+procedure IncrementItemCount()
+  curr_count <- item_count;
+  updated_count = builtin add curr_count one;
+  item_count := updated_count
+end
+
+procedure CheckIdExists(id: Uint256)
+  check_if_id_exists <- exists price_list[id];
+  match check_if_id_exists with
+    | True =>
+    | False =>
+      error = ItemDoesNotExist;
+      Throw error
+   end
+end
+
+procedure AddListingToState(listing: Pair String Uint256)
+  index <- item_count;
+  price_list[index] := listing
+end
+
+procedure RemoveListingFromState(id: Uint256)
+  delete price_list[id]
+end
+
+procedure UpdateListingInState(id: Uint256, listing: Pair String Uint256)
+  price_list[id] := listing
+end
+
+
+(* Transitions *)
+
+(* Adds listing to the state *)
+
+transition AddItem (listing_data_name: String, listing_data_price: Uint256)
+  RequireNotPaused;
+  RequireOwner;
+  listing_data_pair = create_pair listing_data_name listing_data_price;
+  IncrementItemCount;
+  AddListingToState listing_data_pair;
+  index <- item_count;
+
+  e = {
+    _eventname: "AddItem";
+    data_inserted: listing_data_pair;
+    index: index
+  };
+  event e
+end
+
+(* Removes listing from the state *)
+
+transition RemoveItem (listing_id: Uint256)
+  RequireNotPaused;
+  RequireOwner;
+  CheckIdExists listing_id;
+  RemoveListingFromState listing_id;
+
+  e = {
+    _eventname: "RemoveItem";
+    removed_id: listing_id
+  };
+  event e
+end
+
+(* Updates listing in the state *)
+
+transition UpdateItem (listing_id: Uint256, listing_data_name: String, listing_data_price: Uint256)
+  RequireNotPaused;
+  RequireOwner;
+  CheckIdExists listing_id;
+  listing_data_pair = create_pair listing_data_name listing_data_price;
+  UpdateListingInState listing_id listing_data_pair;
+
+  e = {
+    _eventname: "UpdateItem";
+    updated_id: listing_id;
+    updated_data: listing_data_pair
+  };
+  event e
+end
+
+(* Pauses the contract as a circuit-breaker mechanism. *)
+
+transition Pause()
+    RequireNotPaused;
+    RequireOwner;
+    paused := true;
+
+    e = {
+        _eventname: "Pause";
+        paused: true
+    };
+    event e
+end
+
+(* Unpauses the contract. *)
+
+transition Unpause()
+    RequirePaused;
+    RequireOwner;
+    paused := false;
+
+    e = {
+        _eventname: "Unpause";
+        paused: false
+    };
+    event e
+end
