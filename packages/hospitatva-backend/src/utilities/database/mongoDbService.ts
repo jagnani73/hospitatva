@@ -29,12 +29,14 @@ const getDatabase = async () => {
 };
 
 export const getLastIndexedBlock = async () => {
-  const lastIndexedBlock = await (await getDatabase())
-    .collection("indexed-blocks")
-    .find<IndexedBlock>({})
-    .sort({ blockNumber: -1 })
-    .limit(1)
-    .toArray()[0];
+  const lastIndexedBlock = (
+    await (await getDatabase())
+      .collection("indexed-blocks")
+      .find<IndexedBlock>({})
+      .sort({ blockNumber: -1 })
+      .limit(1)
+      .toArray()
+  )[0];
   if (!lastIndexedBlock)
     throw {
       isCustom: true,
@@ -58,4 +60,28 @@ export const updateLastIndexedBlock = async (blockNum: number) => {
       message: "Could not insert last indexed block into MongoDB",
     };
   return result.insertedId;
+};
+
+export const addIndexedBlockToMongoDb = async (
+  blockNumber: number,
+  data: any
+) => {
+  await (await getDatabase())
+    .collection("indexed-blocks")
+    .insertOne({ blockNumber, data });
+};
+
+export const checkExisitngUser = async (
+  did: string,
+  publicAddress: string,
+  email: string
+) => {
+  const existingUser = await (await getDatabase())
+    .collection("magic-users")
+    .findOne({ email });
+  if (existingUser === null) {
+    await (await getDatabase())
+      .collection("magic-users")
+      .insertOne({ did, publicAddress, email });
+  }
 };

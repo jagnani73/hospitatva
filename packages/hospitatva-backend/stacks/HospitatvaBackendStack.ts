@@ -47,6 +47,24 @@ export default class HospitatvaBackendStack extends sst.Stack {
       );
     }
 
+    tableArray.forEach((table, index) =>
+      table.addConsumers(this, {
+        [`priceInference-${index + 1}`]: {
+          function: {
+            functionName: this.stage + "-priceInferenceConsumer" + index + 1,
+            handler:
+              "src/prediction/consumers/predictionInferenceConsumer.handler",
+            timeout: 900,
+            bundle: {
+              nodeModules: ["@zilliqa-js/zilliqa"],
+              minify: false,
+            },
+            permissions: [...tableArray, ssmIamPermission],
+          },
+        },
+      })
+    );
+
     // Create a DynamoDB table for the nonce storage
     const nonceTable = new sst.Table(
       this,

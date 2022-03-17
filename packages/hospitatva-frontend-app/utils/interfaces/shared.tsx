@@ -1,6 +1,7 @@
 export interface HeaderProps {
   type: "primary" | "secondary";
   children: React.ReactNode;
+  tagline?: string;
 }
 
 export interface Validation {
@@ -61,3 +62,41 @@ export type CustomFieldTypes =
   | CustomTextareaProps
   | CustomSelectProps
   | CustomRadioBoxProps;
+
+export const MODAL_ANIMATION_TYPES = [
+  "fade",
+  "fade-left",
+  "fade-right",
+  "fade-top",
+  "fade-bottom",
+  "slide-left",
+  "slide-right",
+  "slide-top",
+  "slide-bottom",
+  "zoom-in",
+  "zoom-out",
+  "spin-cw",
+  "spin-ccw",
+  "rotate-left",
+  "rotate-right",
+  "rotate-top",
+  "rotate-bottom",
+] as const;
+
+export type ModalAnimationTypes = typeof MODAL_ANIMATION_TYPES[number];
+
+export type ModalProps = {
+  titleElement?: React.ReactChild;
+  closeIcon?: React.ReactChild;
+  children: React.ReactNode;
+  isOpen: boolean;
+  enterAnimation?: ModalAnimationTypes;
+  exitAnimation?: ModalAnimationTypes;
+  onClose: () => void;
+};
+
+export interface ButtonProps {
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent) => void;
+  className?: string;
+}
