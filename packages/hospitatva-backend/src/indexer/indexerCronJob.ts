@@ -4,6 +4,7 @@ import { rpcCall } from "../utilities/indexer/executeRpcCall";
 import { indexAndStoreByBlockNum } from "../utilities/indexer/indexByBlockNumber";
 
 export const indexBlocksByTime = async (event: any) => {
+  console.log("Lambda 'indexBlocksByTime' invoked!");
   try {
     const rpcResponse = await rpcCall(nanoid(), "GetLatestTxBlock", []);
     const latestBlockNum = rpcResponse?.header?.BlockNum;

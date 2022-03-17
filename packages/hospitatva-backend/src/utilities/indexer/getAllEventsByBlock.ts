@@ -18,9 +18,11 @@ export const getAllEventsByBlock = async (
       "GetTxnBodiesForTxBlock",
       [blockNumberString]
     );
+    // console.log("TxnBodies:");
+    // console.log(JSON.stringify(getTxnBodiesForTxBlockResponse));
     for (const txnBlock of getTxnBodiesForTxBlockResponse) {
-      const eventLogs = txnBlock?.["event_logs"] ?? [];
-      events.push(eventLogs);
+      const eventLogs = txnBlock?.receipt?.["event_logs"] ?? [];
+      events.push(...eventLogs);
     }
   } catch (e) {
     console.log(JSON.stringify(e));
