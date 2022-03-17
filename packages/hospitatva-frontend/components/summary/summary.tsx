@@ -1,4 +1,5 @@
 import { Magic } from "magic-sdk";
+import { ZilliqaExtension } from "@magic-ext/zilliqa";
 
 import { SummaryProps } from "../../utils/interfaces/summary";
 import { Button, Header } from "../shared";
@@ -22,6 +23,21 @@ const Summary = ({
       if (token) {
         const res = await postMagicToken(token, patient.email);
         console.log(res);
+
+        if (res) {
+          const _magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_API_KEY!, {
+            extensions: [
+              new ZilliqaExtension({
+                rpcUrl: "https://dev-api.zilliqa.com",
+              }),
+            ],
+          });
+
+          // _magic.zilliqa.callContract
+
+          const wallet = await _magic.zilliqa.getWallet();
+          console.log("Zilliqa wallet: ", wallet);
+        }
       }
     } catch (err) {
     } finally {

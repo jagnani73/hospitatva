@@ -12,5 +12,5 @@ export const postMagicToken = async (
     token,
     email,
   });
-  return res.data.data;
+  return res.data;
 };

@@ -10,7 +10,7 @@ const Card = ({ address, commodities, name, contract_address }: CardProps) => {
         <article className="h-full rounded-lg border-2 border-accent-patient-start bg-primaryLight px-4 py-2 text-lg shadow-sm">
           <h3 className="font-semibold">{name}</h3>
           <p>
-            {address[1]} {address[2]}
+            {address[1]}, {address[2]}
           </p>
 
           <p className="mt-2 flex flex-wrap items-center gap-1">
