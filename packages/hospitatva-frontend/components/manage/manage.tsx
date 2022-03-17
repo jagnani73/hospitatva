@@ -1,11 +1,23 @@
-import { useState } from "react";
-import { InventoryProps } from "../../utils/interfaces/manage";
+import { useEffect, useState } from "react";
+import { ManageProps } from "../../utils/interfaces/manage";
 import { Auth, Inventory } from "./";
 
-const Manage = ({ items }: InventoryProps) => {
-  const [walletId, setWalletId] = useState<string>("0xABCD");
+const Manage = ({ items }: ManageProps) => {
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
-  return <>{!walletId ? <Auth /> : <Inventory items={items} />}</>;
+  useEffect(() => {
+    setWalletAddress(sessionStorage.getItem("walletAddress") ?? null);
+  }, []);
+
+  return (
+    <>
+      {!walletAddress ? (
+        <Auth setWalletAddress={setWalletAddress} />
+      ) : (
+        <Inventory items={items} setWalletAddress={setWalletAddress} />
+      )}
+    </>
+  );
 };
 
 export default Manage;

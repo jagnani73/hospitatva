@@ -43,7 +43,7 @@ const Summary = ({
         const res = await postMagicToken(token, patient.email);
 
         if (res) {
-          const result = await magic.zilliqa.callContract(
+          await magic.zilliqa.callContract(
             "AddItem",
             [
               {
@@ -147,6 +147,7 @@ const Summary = ({
                       ₹{price}
                       {projectedPrice < price && (
                         <button
+                          disabled={loading}
                           onClick={() =>
                             setActiveItem({
                               name,

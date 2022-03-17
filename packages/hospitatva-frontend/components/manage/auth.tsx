@@ -1,8 +1,14 @@
+import { useState } from "react";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { EMAIL_SCHEMA } from "../../utils/constants";
+import { Magic } from "magic-sdk";
+import { ZilliqaExtension } from "@magic-ext/zilliqa";
+import { BN, units, bytes, Long } from "@zilliqa-js/zilliqa";
 
+import { EMAIL_SCHEMA } from "../../utils/constants";
 import { Button, Input } from "../shared";
+import { postMagicToken } from "../../services/rest";
+import { AuthProps } from "../../utils/interfaces/manage";
 
 export const authValidationSchema = Yup.object({
   email: Yup.string()
@@ -11,13 +17,71 @@ export const authValidationSchema = Yup.object({
     .required("Email is required"),
 });
 
-const Auth = () => {
+const Auth = ({ setWalletAddress }: AuthProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleSubmit = async (values: { email: string }) => {
+    try {
+      setLoading(true);
+      const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_API_KEY!, {
+        extensions: [
+          new ZilliqaExtension({
+            rpcUrl: "https://dev-api.zilliqa.com/",
+          }),
+        ],
+      });
+      const token = await magic.auth.loginWithMagicLink({
+        email: values["email"],
+        showUI: true,
+      });
+
+      // @ts-ignore
+      const { address } = await magic.zilliqa.getWallet();
+      setWalletAddress(address);
+      sessionStorage.setItem("walletAddress", address);
+
+      if (token) {
+        const res = await postMagicToken(token, values["email"]);
+
+        if (res) {
+          await magic.zilliqa.callContract(
+            "AddItem",
+            [
+              {
+                vname: "listing_data_name",
+                type: "String",
+                value: "Commodity One",
+              },
+              {
+                vname: "listing_data_price",
+                type: "Uint256",
+                value: "9000",
+              },
+            ],
+            {
+              version: bytes.pack(333, 1),
+              amount: new BN(0),
+              gasPrice: units.toQa("5000", units.Units.Li),
+              gasLimit: Long.fromNumber(40000),
+            },
+            33,
+            1000,
+            false,
+            "0xe7dcf9184d66746dd5e01509c65f7255fb19db9c"
+          );
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={{ email: "" }}
-      onSubmit={(values) => {
-        console.log("LOL", values);
-      }}
+      onSubmit={handleSubmit}
       validationSchema={authValidationSchema}
     >
       {({ errors, touched, isValid, isSubmitting }) => (
@@ -31,7 +95,6 @@ const Auth = () => {
               name="email"
               type="text"
               placeholder="Enter Hospital Email"
-              // className="outline-none"
               classNames={{
                 input:
                   "outline-none w-full max-w-sm text-secondary px-4 pl-11 py-2 rounded-md bg-primaryDark shadow-inner border-2 border-accent-hospital-start",
@@ -63,7 +126,30 @@ const Auth = () => {
               className="mt-6"
               type="submit"
             >
-              Sign Wallet and Login
+              {!loading ? (
+                "Sign Wallet and Login"
+              ) : (
+                <svg
+                  className="h-5 w-5 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+              )}
             </Button>
           </Form>
         </>
