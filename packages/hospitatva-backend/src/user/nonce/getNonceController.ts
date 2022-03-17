@@ -1,6 +1,6 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { nanoid } from "nanoid";
-import { insertDataToDynamoDB } from "../../utilities/database/insertDataToDynamoDB";
+import { insertDataToDynamoDB } from "../../utilities/database/dynamoDbService";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
