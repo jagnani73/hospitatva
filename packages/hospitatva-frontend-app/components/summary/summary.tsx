@@ -39,7 +39,7 @@ const Summary = ({
           Order Summary
         </Header>
 
-        <div className="mx-auto mt-4 h-2 w-36 bg-patient-accent" />
+        <div className="mx-auto mt-4 h-2 w-36 bg-accent-patient-start" />
 
         <div>
           <p>
@@ -76,7 +76,7 @@ const Summary = ({
         <p>Mobile: {doctor.number}</p>
 
         <div className="mx-auto mt-10 w-10/12">
-          <div className=" border-y-2 border-patient-secondary border-opacity-80 p-4">
+          <div className=" border-patient-secondary border-y-2 border-opacity-80 p-4">
             <table className="w-full table-auto">
               <thead className="">
                 <tr>

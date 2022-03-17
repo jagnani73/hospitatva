@@ -21,7 +21,7 @@ const Map = ({ latitude, longitude }: MapProps) => {
   return (
     <div
       id="map"
-      className="z-0 aspect-[4/3] w-96 rounded-lg border-2 border-patient-accent shadow-sm"
+      className="z-0 aspect-[4/3] w-full max-w-lg rounded-lg border-2 border-accent-patient-start shadow-sm"
     ></div>
   );
 };

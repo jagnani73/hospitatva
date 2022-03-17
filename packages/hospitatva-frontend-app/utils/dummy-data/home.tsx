@@ -12,7 +12,14 @@ export const Hospitals: CardProps[] = [
     contract_address: "voluptate",
     name: "Appaulo Appaulo Appaulo Appaulo Appaulo Appaulo ",
     address: ["12/7", "ABC Street", "Navi Mumbai"],
-    commodities: [COMMODITIES.BEDS, COMMODITIES.OXYGEN_CYLINDERS],
+    commodities: [
+      COMMODITIES.BEDS,
+      COMMODITIES.OXYGEN_CYLINDERS,
+      COMMODITIES.FLUIDS,
+      COMMODITIES.VENTILATORS,
+      COMMODITIES.VENTILATORS,
+      COMMODITIES.VENTILATORS,
+    ],
   },
   {
     contract_address: "officia",

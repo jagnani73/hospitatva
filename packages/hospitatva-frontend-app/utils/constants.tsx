@@ -10,3 +10,6 @@ export enum ROUTES {
   HOSPITAL = "/hospital",
   MANAGE = "/manage",
 }
+
+export const EMAIL_SCHEMA =
+  /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;

@@ -20,15 +20,22 @@ const Input = (props: CustomFieldTypes) => {
               {props.label}
             </label>
           )}
-          {props.type === "textarea" ? (
-            <Field
-              {...props}
-              component="textarea"
-              className={`${props.classNames?.input ?? ""}`}
-            />
-          ) : (
-            <Field {...props} className={`${props.classNames?.input ?? ""}`} />
-          )}
+          <div className="relative">
+            {props.startElement && props.startElement}
+            {props.type === "textarea" ? (
+              <Field
+                {...props}
+                component="textarea"
+                className={`${props.classNames?.input ?? ""}`}
+              />
+            ) : (
+              <Field
+                {...props}
+                className={`${props.classNames?.input ?? ""}`}
+              />
+            )}
+            {props.endElement && props.endElement}
+          </div>
 
           {props.description && (
             <p className={props.classNames?.description ?? ""}>

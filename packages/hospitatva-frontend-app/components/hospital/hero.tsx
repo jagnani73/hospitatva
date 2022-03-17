@@ -10,7 +10,7 @@ const Hero = ({
   specialists,
 }: HospitalProps) => {
   return (
-    <section className="mx-auto w-10/12 pt-44">
+    <section className="mx-auto w-10/12 py-20">
       <Header type="primary" tagline={address.join(", ")}>
         {name}
       </Header>
@@ -29,19 +29,19 @@ const Hero = ({
         <Map {...marker} />
       </div>
 
-      <table className="mt-10 w-full table-auto border-2 border-patient-secondary">
+      <table className="border-patient-secondary mt-10 w-full table-auto border-2">
         <thead className="bg-green-600 text-white">
           <tr>
-            <th className="border-2 border-patient-secondary py-1 px-4 text-left">
+            <th className="border-patient-secondary border-2 py-1 px-4 text-left">
               Commodity Name
             </th>
-            <th className="border-2 border-patient-secondary p-1 px-4">
+            <th className="border-patient-secondary border-2 p-1 px-4">
               Count
             </th>
-            <th className="border-2 border-patient-secondary p-1 px-4">
-              In Use
+            <th className="border-patient-secondary border-2 p-1 px-4">
+              Available
             </th>
-            <th className="border-2 border-patient-secondary p-1 px-4">
+            <th className="border-patient-secondary border-2 p-1 px-4">
               Price
             </th>
           </tr>

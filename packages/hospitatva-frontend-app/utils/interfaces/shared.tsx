@@ -20,6 +20,8 @@ interface CustomFieldProps extends Validation {
   name: string;
   id: string;
   placeholder?: string;
+  startElement?: React.ReactNode;
+  endElement?: React.ReactNode;
   type:
     | "text"
     | "textarea"
