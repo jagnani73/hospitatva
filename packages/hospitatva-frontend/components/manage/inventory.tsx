@@ -1,28 +1,25 @@
-import { Form, Formik } from "formik";
 import { useState } from "react";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { dummyInventory } from "../../utils/dummy-data/manage";
+
 import { Button, Header, Input, Modal } from "../shared";
-import Controls from "./controls";
+import { Controls } from "./";
+import { InventoryProps } from "../../utils/interfaces/manage";
+import { currencyFormatter } from "../../utils/functions";
 
-const currencyFormatter = new Intl.NumberFormat("en-IN", {
-  style: "currency",
-  currency: "INR",
-});
-
-const CommodityValidationSchema = Yup.object({
-  name: Yup.string().trim().required(),
-  total: Yup.number().required(),
-  available: Yup.number().required(),
-  cost: Yup.number().required(),
-});
-
-const Inventory = () => {
+const Inventory = ({ items }: InventoryProps) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [modal, setModal] = useState<{
     visible: boolean;
     context: "add" | "edit";
   }>({ visible: false, context: "add" });
+
+  const CommodityValidationSchema = Yup.object({
+    name: Yup.string().trim().required(),
+    total: Yup.number().required(),
+    available: Yup.number().required(),
+    cost: Yup.number().required(),
+  });
 
   const handleAdd = () => {
     setModal({ visible: true, context: "add" });
@@ -99,7 +96,7 @@ const Inventory = () => {
             </tr>
           </thead>
           <tbody>
-            {dummyInventory.map((item) => (
+            {items.map((item) => (
               <tr key={item.id}>
                 <td className="border-collapse border border-secondary py-1 px-2">
                   <input type="checkbox" onChange={handleCheck(item.id)} />

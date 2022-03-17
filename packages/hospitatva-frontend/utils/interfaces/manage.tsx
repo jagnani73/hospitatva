@@ -6,10 +6,14 @@ export interface ManageControlProps {
   canDelete?: boolean;
 }
 
-export interface InventoyItem {
+export interface InventoryItem {
   id: number;
   name: string;
   total: number;
   available: number;
   cost: number;
+}
+
+export interface InventoryProps {
+  items: InventoryItem[];
 }

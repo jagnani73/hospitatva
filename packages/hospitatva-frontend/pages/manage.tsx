@@ -1,13 +1,25 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsResult, NextPage } from "next";
 
 import { Manage } from "../components/manage";
+import { dummyInventory } from "../utils/dummy-data/manage";
+import { InventoryProps } from "../utils/interfaces/manage";
 
-const ManagePage: NextPage = () => {
+const ManagePage: NextPage<InventoryProps> = ({ items }) => {
   return (
     <>
-      <Manage />
+      <Manage items={items} />
     </>
   );
 };
 
 export default ManagePage;
+
+export async function getServerSideProps(): Promise<
+  GetServerSidePropsResult<InventoryProps>
+> {
+  return {
+    props: {
+      items: dummyInventory,
+    },
+  };
+}

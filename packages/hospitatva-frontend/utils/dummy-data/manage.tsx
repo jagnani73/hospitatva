@@ -1,7 +1,7 @@
 import { COMMODITIES } from "../constants";
-import { InventoyItem } from "../interfaces/manage";
+import { InventoryItem } from "../interfaces/manage";
 
-export const dummyInventory: InventoyItem[] = [
+export const dummyInventory: InventoryItem[] = [
   { id: 1, name: COMMODITIES.BEDS, total: 10, available: 6, cost: 460000 },
   { id: 2, name: COMMODITIES.FLUIDS, total: 15, available: 2, cost: 145000 },
   {
