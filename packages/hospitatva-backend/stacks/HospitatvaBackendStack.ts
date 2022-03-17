@@ -1,4 +1,5 @@
 import * as sst from "@serverless-stack/resources";
+import { Duration } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { readFileSync } from "fs";
 import path from "path";
@@ -64,6 +65,11 @@ export default class HospitatvaBackendStack extends sst.Stack {
         },
       })
     );
+
+    const indexerCron = new sst.Cron(this, "Hospitatva-Indexer-Cron", {
+      job: "src/indexer/indexerCronJob.indexBlocksByTime",
+      schedule: Duration.seconds(30),
+    });
 
     // Create a DynamoDB table for the nonce storage
     const nonceTable = new sst.Table(
