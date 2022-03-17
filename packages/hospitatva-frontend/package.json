@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@magic-ext/zilliqa": "^3.1.0",
+    "@zilliqa-js/zilliqa": "^3.3.4",
     "axios": "^0.26.1",
     "formik": "^2.2.9",
     "magic-sdk": "^8.1.0",

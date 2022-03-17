@@ -2,9 +2,9 @@ import { useRouter } from "next/router";
 import { ROUTES } from "../../utils/constants";
 
 const Navbar = () => {
-  const router = useRouter();
+  const { route } = useRouter();
 
-  const isHospitalManager = router.route.includes(ROUTES.MANAGE);
+  const isHospitalManager = route.includes(ROUTES.MANAGE);
 
   return (
     <nav
