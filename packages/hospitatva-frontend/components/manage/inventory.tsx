@@ -18,6 +18,7 @@ const CommodityValidationSchema = Yup.object({
 });
 
 const Inventory = () => {
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [modal, setModal] = useState<{
     visible: boolean;
     context: "add" | "edit";
@@ -28,12 +29,22 @@ const Inventory = () => {
   };
 
   const handleEdit = () => {
-    console.log("Edit");
+    setModal({ visible: true, context: "edit" });
   };
 
   const handleDelete = () => {
     console.log("Delete");
   };
+
+  const handleCheck =
+    (itemId: number): React.ChangeEventHandler<HTMLInputElement> =>
+    (e) => {
+      if (e.target.checked) {
+        setSelectedIds((state) => [...state, itemId]);
+      } else {
+        setSelectedIds((state) => state.filter((item) => item !== itemId));
+      }
+    };
 
   return (
     <section className="mx-auto mt-28 flex max-w-5xl flex-col items-center p-4">
@@ -65,6 +76,8 @@ const Inventory = () => {
           onAdd={handleAdd}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          canEdit={selectedIds.length === 1}
+          canDelete={selectedIds.length > 0}
         />
       </div>
       <div>
@@ -72,7 +85,7 @@ const Inventory = () => {
           <thead className="bg-gradient-to-b from-accent-hospital-start to-accent-hospital-stop">
             <tr>
               <th className="w-12 border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
-                <input type="checkbox" />
+                {/* <input type="checkbox" /> */}
               </th>
               <th className="border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
                 Item Name
@@ -87,12 +100,9 @@ const Inventory = () => {
           </thead>
           <tbody>
             {dummyInventory.map((item) => (
-              <tr>
+              <tr key={item.id}>
                 <td className="border-collapse border border-secondary py-1 px-2">
-                  <input
-                    type="checkbox"
-                    onChange={(e) => console.log(e.target.checked)}
-                  />
+                  <input type="checkbox" onChange={handleCheck(item.id)} />
                 </td>
                 <td className="border-collapse border border-secondary py-1 px-2">
                   {item.name}
