@@ -33,7 +33,7 @@ export const getLastIndexedBlock = async () => {
     await (await getDatabase())
       .collection("indexed-blocks")
       .find<IndexedBlock>({})
-      .sort({ _id: -1 })
+      .sort({ blockNumber: -1 })
       .limit(1)
       .toArray()
   )[0];
@@ -44,4 +44,13 @@ export const getLastIndexedBlock = async () => {
       message: "Could not fetch last indexed block from MongoDB",
     };
   return lastIndexedBlock;
+};
+
+export const addIndexedBlockToMongoDb = async (
+  blockNumber: number,
+  data: any
+) => {
+  await (await getDatabase())
+    .collection("indexed-blocks")
+    .insertOne({ blockNumber, data });
 };
