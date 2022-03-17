@@ -1,9 +1,10 @@
+import { HomeProps } from "../../utils/interfaces/home";
 import { Hero } from "./";
 
-const Home = () => {
+const Home = ({ hospitals }: HomeProps) => {
   return (
     <>
-      <Hero />
+      <Hero hospitals={hospitals} />
     </>
   );
 };

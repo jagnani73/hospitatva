@@ -5,3 +5,11 @@ export interface CardProps {
   address: [string, string, string];
   commodities: COMMODITIES[];
 }
+
+export interface HeroProps {
+  hospitals: CardProps[];
+}
+
+export interface HomeProps {
+  hospitals: CardProps[];
+}
