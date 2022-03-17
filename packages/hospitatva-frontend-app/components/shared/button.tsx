@@ -1,17 +1,14 @@
-export interface ButtonProps {
-	children: React.ReactNode;
-	onClick: () => void;
-}
+import { ButtonProps } from "../../utils/interfaces/shared";
 
-const button = ({ children, onClick }: ButtonProps) => {
-	return (
-		<button
-			onClick={onClick}
-			className="bg-gradient-to-r from-patient-accent to-green-600 px-6 py-3 text-white"
-		>
-			{children}
-		</button>
-	);
+const Button = ({ children, onClick, className = "" }: ButtonProps) => {
+  return (
+    <button
+      onClick={onClick}
+      className={`bg-gradient-to-r from-patient-accent to-green-600 px-6 py-3 text-white ${className}`}
+    >
+      {children}
+    </button>
+  );
 };
 
-export default button;
+export default Button;
