@@ -127,6 +127,11 @@ procedure RemoveListingFromState(id: Uint256)
   delete price_list[id]
 end
 
+procedure UpdateListingInState(id: Uint256, listing: Pair String Uint256)
+  price_list[id] := listing
+end
+
+
 (* Transitions *)
 
 (* Adds listing to the state *)
@@ -161,10 +166,22 @@ transition RemoveItem (listing_id: Uint256)
   };
   event e
 end
-(* Transition signature *)
-transition UpdateItem ()
-  (* Transition body *)
 
+(* Updates listing in the state *)
+
+transition UpdateItem (listing_id: Uint256, listing_data_name: String, listing_data_price: Uint256)
+  RequireNotPaused;
+  RequireOwner;
+  CheckIdExists listing_id;
+  listing_data_pair = create_pair listing_data_name listing_data_price;
+  UpdateListingInState listing_id listing_data_pair;
+
+  e = {
+    _eventname: "UpdateItem";
+    updated_id: listing_id;
+    updated_data: listing_data_pair
+  };
+  event e
 end
 
 (* Pauses the contract as a circuit-breaker mechanism. *)
