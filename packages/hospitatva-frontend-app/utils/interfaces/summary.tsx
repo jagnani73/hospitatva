@@ -7,6 +7,7 @@ export interface SummaryProps {
     sex: string;
     address: string;
     number: number;
+    email: string;
   };
   doctor: {
     name: string;

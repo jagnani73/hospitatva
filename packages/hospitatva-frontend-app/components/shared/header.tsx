@@ -1,13 +1,14 @@
-import { Button } from ".";
 import { HeaderProps } from "../../utils/interfaces/shared";
 
-const Header = ({ type, children, tagline }: HeaderProps) => {
+const Header = ({ type, children, tagline, className = "" }: HeaderProps) => {
   switch (type) {
     case "primary": {
       return (
-        <div className="flex items-end">
+        <div className={`flex items-end ${className}`}>
           <div>
-            <h1 className="text-3xl font-semibold">{children}</h1>
+            <h1 className={`text-3xl font-semibold ${className}`}>
+              {children}
+            </h1>
             {tagline && <h2 className="text-xl">{tagline}</h2>}
           </div>
         </div>
@@ -15,7 +16,9 @@ const Header = ({ type, children, tagline }: HeaderProps) => {
     }
     case "secondary": {
       return (
-        <h2 className="mb-8 border-l-4 border-patient-accent py-1 pl-2 text-2xl font-semibold">
+        <h2
+          className={`mb-8 border-l-4 border-patient-accent py-1 pl-2 text-2xl font-semibold ${className}`}
+        >
           {children}
         </h2>
       );

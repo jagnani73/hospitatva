@@ -28,6 +28,7 @@ export async function getServerSideProps({
       date: Date.now().toString(),
       patient: {
         name: "Snehil",
+        email: "gizmoclardin@gmail.com",
         sex: "Male",
         age: 22,
         address: "Estancia 1234, Chennai, TN, India",

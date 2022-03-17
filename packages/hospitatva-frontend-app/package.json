@@ -8,16 +8,20 @@
     "start": "next start"
   },
   "dependencies": {
+    "@magic-ext/zilliqa": "^3.1.0",
+    "axios": "^0.26.1",
     "formik": "^2.2.9",
+    "magic-sdk": "^8.1.0",
     "mapbox-gl": "^2.7.0",
     "next": "12.0.7",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "yup": "^0.32.11",
     "react-transition-group": "^4.4.2",
-    "sass": "^1.49.9"
+    "sass": "^1.49.9",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/mapbox-gl": "^2.6.3",
     "@types/node": "17.0.8",
     "@types/react": "17.0.38",

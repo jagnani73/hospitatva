@@ -1,11 +1,10 @@
-import Link from "next/link";
 import { HeroProps } from "../../utils/interfaces/home";
 import { Header } from "../shared";
 import { Card } from "./";
 
 const Hero = ({ hospitals }: HeroProps) => {
   return (
-    <section className="mx-auto w-10/12 pt-36">
+    <section className="mx-auto mt-6 w-10/12">
       <Header type="secondary">Hospitals near you</Header>
 
       <div className="grid grid-cols-4 gap-16">
