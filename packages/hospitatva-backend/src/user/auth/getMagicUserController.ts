@@ -1,22 +1,28 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
-import { nanoid } from "nanoid";
-import { insertDataToDynamoDB } from "../../utilities/database/dynamoDbService";
+import { SSM } from "aws-sdk";
 import { verifyMagicToken } from "../../utilities/magic/magicService";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    if (!event.body || !JSON.parse(event.body)["token"])
+    const body = JSON.parse(event.body as string);
+    const ssm = new SSM();
+    const ssmResponse = await ssm
+      .getParameter({
+        Name: "/sih-22-backend/MAGIC_API_KEY",
+        WithDecryption: true,
+      })
+      .promise();
+    const magicApiKey = ssmResponse.Parameter?.Value;
+
+    if (!body || !body.token || !body.email)
       throw {
         isCustom: true,
         statusCode: 400,
         message: "Empty or invalid request body",
       };
-    await verifyMagicToken(
-      JSON.parse(event.body)["token"],
-      JSON.parse(event.body)["email"]
-    );
+    await verifyMagicToken(body.token, body.email, magicApiKey as string);
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },

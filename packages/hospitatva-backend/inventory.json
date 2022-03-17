@@ -1,18 +1,18 @@
 [
   {
     "id": 1,
-    "name": "Bed"
+    "name": "Bed - Private Room"
   },
   {
     "id": 2,
-    "name": "Ventilator"
+    "name": "Bed - General Ward"
   },
   {
     "id": 3,
-    "name": "Oxygen Cylinder"
+    "name": "Oxygen Cylinder - 10 litre"
   },
   {
     "id": 4,
-    "name": "Fluids"
+    "name": "Oxygen Cylinder - 20 litre"
   }
 ]

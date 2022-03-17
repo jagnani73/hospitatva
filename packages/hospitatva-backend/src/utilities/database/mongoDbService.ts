@@ -1,4 +1,5 @@
 import { SSM } from "aws-sdk";
+import axios from "axios";
 import { MongoClient, Db } from "mongodb";
 import { IndexedBlock } from "../types/customTypes";
 
@@ -84,4 +85,33 @@ export const checkExisitngUser = async (
       .collection("magic-users")
       .insertOne({ did, publicAddress, email });
   }
+};
+
+export const slidingWindowStorage = async (id: number, price: number) => {
+  let existingWindow = await (await getDatabase())
+    .collection(`sliding-windows`)
+    .findOne<{ id: number; window: number[] }>({ id });
+  if (!existingWindow) existingWindow = { id, window: [] };
+  existingWindow.window.push(price);
+  if (existingWindow.window.length == 31) {
+    const data = await axios.post("http://139.59.53.149/predict", {
+      data_points: existingWindow.window,
+    });
+    console.log(data.data);
+    return await (await getDatabase())
+      .collection("sliding-windows")
+      .updateOne(
+        { id },
+        { $set: { id: existingWindow.id, window: [] } },
+        { upsert: true }
+      );
+  }
+
+  await (await getDatabase())
+    .collection("sliding-windows")
+    .updateOne(
+      { id },
+      { $set: { id: existingWindow.id, window: existingWindow.window } },
+      { upsert: true }
+    );
 };

@@ -24,35 +24,30 @@ export default class HospitatvaBackendStack extends sst.Stack {
 
     // Create a DynamoDB table array for products
     const tableArray: Array<sst.Table> = [];
+    let tableNameEnv: any = {};
 
     for (let i = 0; i < inventoryArray.length; i++) {
       tableArray.push(
-        new sst.Table(
-          this,
-          `Hospitatva-DynamoDB-Table-${i + 1}-${inventoryArray[i].name.replace(
-            /\s/g,
-            "-"
-          )}`,
-          {
-            fields: {
-              id: sst.TableFieldType.STRING,
-              updatedAt: sst.TableFieldType.STRING,
-              price: sst.TableFieldType.STRING,
-            },
-            primaryIndex: {
-              partitionKey: "id",
-            },
-            stream: true,
-          }
-        )
+        new sst.Table(this, `Hospitatva-Table-${i + 1}`, {
+          fields: {
+            id: sst.TableFieldType.STRING,
+            updatedAt: sst.TableFieldType.STRING,
+            price: sst.TableFieldType.STRING,
+          },
+          primaryIndex: {
+            partitionKey: "updatedAt",
+          },
+          stream: true,
+        })
       );
+      tableNameEnv[`TABLE_NAME_${i + 1}`] = tableArray[i].tableName;
     }
 
     tableArray.forEach((table, index) =>
       table.addConsumers(this, {
         [`priceInference-${index + 1}`]: {
           function: {
-            functionName: this.stage + "-priceInferenceConsumer" + index + 1,
+            functionName: this.stage + "-priceInferenceConsumer" + (index + 1),
             handler:
               "src/prediction/consumers/predictionInferenceConsumer.handler",
             timeout: 900,
@@ -67,7 +62,13 @@ export default class HospitatvaBackendStack extends sst.Stack {
     );
 
     const indexerCron = new sst.Cron(this, "Hospitatva-Indexer-Cron", {
-      job: "src/indexer/indexerCronJob.indexBlocksByTime",
+      job: {
+        function: {
+          handler: "src/indexer/indexerCronJob.indexBlocksByTime",
+          permissions: [...tableArray],
+          environment: { ...tableNameEnv },
+        },
+      },
       schedule: "cron(0/1 * * * ? *)",
     });
 
@@ -103,6 +104,7 @@ export default class HospitatvaBackendStack extends sst.Stack {
         "POST /user/magic": {
           function: {
             handler: "src/user/auth/getMagicUserController.handler",
+            permissions: [ssmIamPermission],
           },
         },
       },

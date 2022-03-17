@@ -1,14 +1,18 @@
 import { DynamoDBStreamHandler } from "aws-lambda";
+import { slidingWindowStorage } from "../../utilities/database/mongoDbService";
 
 import { parseRecord } from "../../utilities/parser/dynamoDbStreamParser";
 
 export const handler: DynamoDBStreamHandler = async (event) => {
   try {
-    console.log("Triggered Sumsub DynamoDB Stream Handler");
-    for (const record of event?.Records) {
+    console.log("Triggered Inference DynamoDB Stream Handler");
+    for (const record of event.Records) {
       if (record.eventName === "INSERT") {
         const parsedData = parseRecord(record.dynamodb?.NewImage);
-        console.log(`Incoming data: ${JSON.stringify(parsedData)}`);
+        slidingWindowStorage(
+          parseInt(parsedData.id),
+          parseInt(parsedData.price)
+        );
       }
     }
     return;

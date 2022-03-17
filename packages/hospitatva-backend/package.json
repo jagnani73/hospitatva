@@ -30,6 +30,7 @@
     "@supabase/supabase-js": "^1.31.1",
     "@zilliqa-js/zilliqa": "^3.3.4",
     "aws-sdk": "^2.1095.0",
+    "axios": "^0.26.1",
     "mongodb": "^4.4.1",
     "nanoid": "^3.3.1",
     "node-fetch": "^3.2.3"
