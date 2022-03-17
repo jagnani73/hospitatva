@@ -1,9 +1,30 @@
-import { Button, Header } from "../shared";
+import { Form, Formik } from "formik";
+import { useState } from "react";
+import * as Yup from "yup";
+import { dummyInventory } from "../../utils/dummy-data/manage";
+import { Button, Header, Input, Modal } from "../shared";
 import Controls from "./controls";
 
+const currencyFormatter = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+});
+
+const CommodityValidationSchema = Yup.object({
+  name: Yup.string().trim().required(),
+  total: Yup.number().required(),
+  available: Yup.number().required(),
+  cost: Yup.number().required(),
+});
+
 const Inventory = () => {
+  const [modal, setModal] = useState<{
+    visible: boolean;
+    context: "add" | "edit";
+  }>({ visible: false, context: "add" });
+
   const handleAdd = () => {
-    console.log("Add");
+    setModal({ visible: true, context: "add" });
   };
 
   const handleEdit = () => {
@@ -47,33 +68,145 @@ const Inventory = () => {
         />
       </div>
       <div>
-        <table className="w-full table-auto">
-          <thead>
+        <table className="box-border w-full table-fixed border-collapse border border-secondary">
+          <thead className="bg-gradient-to-b from-accent-hospital-start to-accent-hospital-stop">
             <tr>
-              <th>Song</th>
-              <th>Artist</th>
-              <th>Year</th>
+              <th className="w-12 border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
+                <input type="checkbox" />
+              </th>
+              <th className="border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
+                Item Name
+              </th>
+              <th className="border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
+                Availability
+              </th>
+              <th className="border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
+                Cost (in ₹)
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>The Sliding Mr. Bones (Next Stop, Pottersville)</td>
-              <td>Malcolm Lockyer</td>
-              <td>1961</td>
-            </tr>
-            <tr>
-              <td>Witchy Woman</td>
-              <td>The Eagles</td>
-              <td>1972</td>
-            </tr>
-            <tr>
-              <td>Shining Star</td>
-              <td>Earth, Wind, and Fire</td>
-              <td>1975</td>
-            </tr>
+            {dummyInventory.map((item) => (
+              <tr>
+                <td className="border-collapse border border-secondary py-1 px-2">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => console.log(e.target.checked)}
+                  />
+                </td>
+                <td className="border-collapse border border-secondary py-1 px-2">
+                  {item.name}
+                </td>
+                <td className="border-collapse border border-secondary py-1 px-2 text-center">
+                  {item.available}/{item.total}
+                </td>
+                <td className="border-collapse border border-secondary py-1 px-2 text-right">
+                  {currencyFormatter.format(item.cost / 100)}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
+      <Modal
+        isOpen={modal.visible}
+        enterAnimation="fade-right"
+        exitAnimation="fade-right"
+        onClose={() => setModal((state) => ({ ...state, visible: false }))}
+        titleElement={
+          <h3 className="text-lg font-medium">
+            {modal.context === "add" ? "Create new entry" : "Edit item details"}
+          </h3>
+        }
+        classNames={{
+          content: "!bg-primaryLight !max-w-xl",
+          header:
+            "!bg-gradient-to-b !from-accent-hospital-start !to-accent-hospital-stop text-primaryLight",
+        }}
+      >
+        <h2 className="mb-5 text-xl font-semibold">
+          {modal.context === "add" ? "Create new" : "Edit item"}
+        </h2>
+        <Formik
+          initialValues={{ email: "" }}
+          onSubmit={(values) => {
+            console.log("LOL", values);
+          }}
+          validationSchema={CommodityValidationSchema}
+        >
+          {({ errors, touched, isValid, isSubmitting }) => (
+            <Form className="col-2 relative grid grid-cols-2 gap-4 text-gray-300">
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Enter item name"
+                label="Item Name"
+                classNames={{
+                  label: "text-secondary text-sm mb-1 block",
+                  wrapper: "col-span-2",
+                  input:
+                    "bg-primaryLight outline-none w-full text-secondary px-4 py-2 rounded-md border-2 border-primaryDark focus:border-accent-hospital-start",
+                }}
+              />
+              <Input
+                id="available"
+                name="available"
+                type="number"
+                placeholder="--"
+                label="Available Stock"
+                classNames={{
+                  label: "text-secondary text-sm mb-1 block",
+                  input:
+                    "bg-primaryLight outline-none outline-none w-full text-secondary px-4 py-2 rounded-md border-2 border-primaryDark focus:border-accent-hospital-start",
+                }}
+              />
+              <Input
+                id="total"
+                name="total"
+                type="number"
+                placeholder="--"
+                label="Total Stock"
+                classNames={{
+                  label: "text-secondary text-sm mb-1 block",
+                  input:
+                    "bg-primaryLight outline-none outline-none w-full text-secondary px-4 py-2 rounded-md border-2 border-primaryDark focus:border-accent-hospital-start",
+                }}
+              />
+              <Input
+                id="cost"
+                name="cost"
+                type="number"
+                placeholder="Enter cost in ₹"
+                label="Cost (in ₹)"
+                classNames={{
+                  wrapper: "col-span-2",
+                  label: "text-secondary text-sm mb-1 block",
+                  input:
+                    "bg-primaryLight outline-none outline-none w-full text-secondary px-4 py-2 rounded-md border-2 border-primaryDark focus:border-accent-hospital-start",
+                }}
+              />
+              {touched.email && errors.email && (
+                <div className="mt-1 text-base font-semibold text-red-500">
+                  {errors.email}
+                </div>
+              )}
+              <footer className="col-span-2 mt-6 flex justify-center gap-4">
+                <Button outlined size="small" type="reset">
+                  Cancel
+                </Button>
+                <Button
+                  size="small"
+                  disabled={!isValid || isSubmitting}
+                  type="submit"
+                >
+                  Confirm
+                </Button>
+              </footer>
+            </Form>
+          )}
+        </Formik>
+      </Modal>
     </section>
   );
 };

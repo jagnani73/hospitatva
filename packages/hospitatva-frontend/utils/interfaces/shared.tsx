@@ -107,4 +107,5 @@ export interface ButtonProps
     HTMLButtonElement
   > {
   size?: "normal" | "small";
+  outlined?: boolean;
 }
