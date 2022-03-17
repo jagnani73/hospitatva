@@ -9,4 +9,10 @@ export interface HospitalProps extends Omit<CardProps, "commodities"> {
     in_use: number;
     price: number;
   }[];
+  marker: { latitude: number; longitude: number };
+}
+
+export interface MapProps {
+  longitude: number;
+  latitude: number;
 }

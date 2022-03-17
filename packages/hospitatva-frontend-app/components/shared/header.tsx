@@ -5,8 +5,8 @@ const Header = ({ type, children, tagline }: HeaderProps) => {
     case "primary": {
       return (
         <>
-          <h1>{children}</h1>
-          {tagline && <h2>{tagline}</h2>}
+          <h1 className="text-4xl font-semibold">{children}</h1>
+          {tagline && <h2 className="text-3xl">{tagline}</h2>}
         </>
       );
     }

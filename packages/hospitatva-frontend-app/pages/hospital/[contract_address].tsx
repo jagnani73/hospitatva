@@ -27,7 +27,8 @@ export async function getServerSideProps({
 
   return {
     props: {
-      specialists: [""],
+      specialists: ["Aologist", "Bologist", "Cologist"],
+      marker: { latitude: 50, longitude: 50 },
       contract_address: "Labore",
       name: "Appaulo",
       address: ["12/7", "ABC Street", "Navi Mumbai"],
