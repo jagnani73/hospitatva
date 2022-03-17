@@ -21,5 +21,6 @@ export interface SummaryProps {
     name: string;
     quantity: number;
     price: number;
+    projectedPrice: number;
   }[];
 }

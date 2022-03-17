@@ -45,21 +45,25 @@ export async function getServerSideProps({
         {
           name: "Commodity One",
           price: 400,
+          projectedPrice: 400,
           quantity: 9,
         },
         {
           name: "Commodity Two",
           price: 60,
+          projectedPrice: 20,
           quantity: 1,
         },
         {
           name: "Commodity Three",
           price: 20,
+          projectedPrice: 40,
           quantity: 100,
         },
         {
           name: "Commodity Four",
           price: 1,
+          projectedPrice: 37,
           quantity: 90,
         },
       ],
