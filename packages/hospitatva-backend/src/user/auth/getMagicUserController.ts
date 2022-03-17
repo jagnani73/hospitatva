@@ -1,31 +1,27 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyHandlerV2 } from "aws-lambda";
 import { nanoid } from "nanoid";
 import { insertDataToDynamoDB } from "../../utilities/database/dynamoDbService";
+import { verifyMagicToken } from "../../utilities/magic/magicService";
 
 export const handler: APIGatewayProxyHandlerV2 = async (
   event: APIGatewayProxyEventV2
 ) => {
   try {
-    if (
-      !event.queryStringParameters ||
-      !event.queryStringParameters.walletAddress
-    )
+    if (!event.body || !JSON.parse(event.body)["token"])
       throw {
         isCustom: true,
         statusCode: 400,
-        message: "Empty or invalid request query string",
+        message: "Empty or invalid request body",
       };
-    const nonce = nanoid(36);
-    await insertDataToDynamoDB(process.env.NONCE_TABLE_NAME as string, {
-      userWallet: event.queryStringParameters.walletAddress,
-      nonce,
-    });
+    await verifyMagicToken(
+      JSON.parse(event.body)["token"],
+      JSON.parse(event.body)["email"]
+    );
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        walletAddress: event.queryStringParameters.walletAddress,
-        nonce,
+        message: "User was verified successfully",
       }),
     };
   } catch (error) {

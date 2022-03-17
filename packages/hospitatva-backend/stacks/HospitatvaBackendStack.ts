@@ -66,10 +66,10 @@ export default class HospitatvaBackendStack extends sst.Stack {
       })
     );
 
-    const indexerCron = new sst.Cron(this, "Hospitatva-Indexer-Cron", {
-      job: "src/indexer/indexerCronJob.indexBlocksByTime",
-      schedule: Duration.seconds(30),
-    });
+    // const indexerCron = new sst.Cron(this, "Hospitatva-Indexer-Cron", {
+    //   job: "src/indexer/indexerCronJob.indexBlocksByTime",
+    //   schedule: Duration.seconds(30),
+    // });
 
     // Create a DynamoDB table for the nonce storage
     const nonceTable = new sst.Table(
@@ -96,6 +96,11 @@ export default class HospitatvaBackendStack extends sst.Stack {
             environment: {
               NONCE_TABLE_NAME: nonceTable.tableName,
             },
+          },
+        },
+        "POST /user/magic": {
+          function: {
+            handler: "src/user/auth/getMagicUserController.handler",
           },
         },
       },
