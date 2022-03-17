@@ -28,23 +28,9 @@ const Summary = ({
       });
 
       if (token) {
-        const wallet = await magic.zilliqa.getWallet();
-        console.log("Zilliqa wallet: ", wallet);
-
-        await new Promise((res, rej) => {
-          setTimeout(() => {
-            console.log("here");
-            res(null);
-          }, 10000);
-        });
-
         const res = await postMagicToken(token, patient.email);
-        console.log("posted");
+
         if (res) {
-          const a = await magic.user.isLoggedIn();
-          console.log(a);
-          const b = await magic.user.getMetadata();
-          console.log(b);
           const result = await magic.zilliqa.callContract(
             "AddItem",
             [
@@ -62,8 +48,8 @@ const Summary = ({
             {
               version: bytes.pack(333, 1),
               amount: new BN(0),
-              gasPrice: units.toQa("0.1", units.Units.Li),
-              gasLimit: Long.fromNumber(10000),
+              gasPrice: units.toQa("5000", units.Units.Li),
+              gasLimit: Long.fromNumber(40000),
             },
             33,
             1000,
