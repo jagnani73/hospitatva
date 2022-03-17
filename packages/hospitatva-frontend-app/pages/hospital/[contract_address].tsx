@@ -8,7 +8,7 @@ import { Hospital } from "../../components/hospital";
 import { COMMODITIES } from "../../utils/constants";
 import { HospitalProps } from "../../utils/interfaces/hospital";
 
-const HomePage: NextPage<HospitalProps> = (hospital) => {
+const HospitalPage: NextPage<HospitalProps> = (hospital) => {
   return (
     <>
       <Hospital {...hospital} />
@@ -16,7 +16,7 @@ const HomePage: NextPage<HospitalProps> = (hospital) => {
   );
 };
 
-export default HomePage;
+export default HospitalPage;
 
 export async function getServerSideProps({
   query,
