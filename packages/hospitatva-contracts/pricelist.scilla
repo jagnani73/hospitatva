@@ -3,6 +3,7 @@
 (***************************************************)
 
 scilla_version 0
+import BoolUtils ListUtils IntUtils
 
 (***************************************************)
 (*               Associated library                *)
@@ -12,8 +13,35 @@ library HospitatvaPriceList
 
 
 (* Library code block follows *)
+let true = True
+let false = False
+let one = Uint256 1
+type ContractErrors = 
+    | NotPausedError
+    | PausedError
+    | NotOwnerError
 
+let create_pair =
+fun(name: String) =>
+fun(price: Uint256) =>
+    let prc = price in
+    Pair {String Uint256} name prc
 
+let one_msg = 
+  fun (msg: Message) => 
+    let nil_msg = Nil {Message} in
+    Cons {Message} msg nil_msg
+
+let throw_err =
+    fun (err : ContractErrors) => 
+        let error_code =
+            match err with
+                | NotPausedError => Int32 -1
+                | PausedError => Int32 -2
+                | NotOwnerError => Int32 -3
+             end
+        in
+        { _exception: "Error"; code: error_code }
 
 (***************************************************)
 (*             Contract definition                 *)
@@ -23,23 +51,105 @@ contract HospitatvaPriceList
 
 (* Immutable fields declaration *)
 
-()
+(
+  initial_contract_owner: ByStr20
+)
 
 (* Mutable fields declaration *)
 
-field vname_1 : vtype_1 = init_val_1
-field vname_2 : vtype_2 = init_val_2
+field contract_owner : ByStr20 = initial_contract_owner
+field item_count : Uint256 = Uint256 0
+field price_list : Map Uint256 (Pair String Uint256) = Emp Uint256 (Pair String Uint256)
+field paused: Bool = False 
+
+(* Procedures *)
+
+procedure Throw(error: ContractErrors)
+    e = throw_err error;
+    throw e
+end
+
+procedure RequireOwner()
+    curr_owner <- contract_owner;
+    is_contract_owner = builtin eq curr_owner _sender;
+    match is_contract_owner with
+        | True =>
+        | False =>
+            error = NotOwnerError;
+            Throw error
+    end
+end
+
+procedure RequireNotPaused()
+    is_paused <- paused;
+    match is_paused with
+        | False =>
+        | True =>
+            error = PausedError;
+            Throw error
+    end      
+end
+
+procedure RequirePaused()
+  is_paused <- paused;
+  match is_paused with
+  | True =>
+  | False =>
+    error = NotPausedError;
+    Throw error
+  end
+end
+
+procedure IncrementItemCount()
+  curr_count <- item_count;
+  updated_count = builtin add curr_count one;
+  item_count := updated_count
+end
+
+procedure AddListingToState(listing: Pair String Uint256)
+  index <- item_count;
+  price_list[index] := listing
+end
+
+
+
 
 (* Transitions *)
 
 
 (* Transition signature *)
-transition firstTransition (param_1 : type_1, param_2 : type_2)
+transition AddItem (listing_data_name: String, listing_data_price: Uint256)
+  (* Transition body *)
+  RequireNotPaused;
+  RequireOwner;
+  listing_data_pair = create_pair listing_data_name listing_data_price;
+  IncrementItemCount;
+  AddListingToState listing_data_pair;
+  index <- item_count;
+  e = {
+    _eventname: "AddItem";
+    data_inserted: listing_data_pair;
+    index: index
+  };
+  event e
+end
+(* Transition signature *)
+transition RemoveItem ()
   (* Transition body *)
 
 end
+(* Transition signature *)
+transition UpdateItem ()
+  (* Transition body *)
 
-transition secondTransition (param_1: type_1)
+end
+(* Transition signature *)
+transition Pause ()
+  (* Transition body *)
+
+end
+(* Transition signature *)
+transition Unpause ()
   (* Transition body *)
 
 end
