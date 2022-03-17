@@ -4,7 +4,7 @@ import { ZilliqaExtension } from "@magic-ext/zilliqa";
 import { BN, units, bytes, Long } from "@zilliqa-js/zilliqa";
 
 import { SummaryProps } from "../../utils/interfaces/summary";
-import { Button, Header } from "../shared";
+import { Button, Header, Modal } from "../shared";
 import { postMagicToken } from "../../services/rest";
 
 const Summary = ({
@@ -17,6 +17,12 @@ const Summary = ({
 }: SummaryProps) => {
   const [paid, setPaid] = useState<boolean>(initiallyPaid);
   const [loading, setLoading] = useState<boolean>(false);
+  const [activeItem, setActiveItem] = useState<{
+    name: string;
+    quantity: number;
+    price: number;
+    projectedPrice: number;
+  } | null>();
 
   const handlePayment = async () => {
     try {
@@ -126,20 +132,37 @@ const Summary = ({
               <thead className="">
                 <tr>
                   <th className="py-1 px-4 text-left">Item Name</th>
+                  <th className="p-1 px-4">Projected Price</th>
+                  <th className="p-1 px-4">Quoted Price</th>
                   <th className="p-1 px-4">Quantity</th>
-                  <th className="p-1 px-4">Price</th>
                   <th className="p-1 px-4">Amount</th>
                 </tr>
               </thead>
               <tbody className="mt-10">
-                {items.map(({ name, price, quantity }) => (
+                {items.map(({ name, price, quantity, projectedPrice }) => (
                   <tr key={name}>
                     <td className="p-1 px-4">{name}</td>
-                    <td className="p-1 px-4 text-center">{quantity}</td>
-                    <td className="p-1 px-4 text-center">₹{price}</td>
-                    <td className="p-1 px-4 text-center">
-                      ₹{price * quantity}
+                    <td className="p-1 px-4 text-right">{projectedPrice}</td>
+                    <td className="flex items-center justify-end p-1 px-4 text-right">
+                      ₹{price}
+                      {projectedPrice < price && (
+                        <button
+                          onClick={() =>
+                            setActiveItem({
+                              name,
+                              price,
+                              quantity,
+                              projectedPrice,
+                            })
+                          }
+                          className="ml-1 text-xs font-bold text-red-500"
+                        >
+                          Report
+                        </button>
+                      )}
                     </td>
+                    <td className="p-1 px-4 text-right">{quantity}</td>
+                    <td className="p-1 px-4 text-right">₹{price * quantity}</td>
                   </tr>
                 ))}
               </tbody>
@@ -148,7 +171,7 @@ const Summary = ({
 
           <p className="mt-4 pr-10 text-right">
             Grand Total:{" "}
-            <span className="font-bold">
+            <span className="font-bold underline">
               ₹
               {items.reduce(
                 (prev, item) => prev + item.price * item.quantity,
@@ -197,6 +220,30 @@ const Summary = ({
           Powered by Hospitatva.
         </p>
       </div>
+
+      <Modal
+        isOpen={activeItem ? true : false}
+        enterAnimation="fade-right"
+        exitAnimation="fade-right"
+        onClose={() => setActiveItem(null)}
+        titleElement={<h3 className="text-lg font-medium">Are you sure?</h3>}
+        classNames={{
+          content: "!bg-primaryLight !max-w-xl",
+          header:
+            "!bg-gradient-to-b !from-accent-patient-start !to-accent-patient-stop text-primaryLight",
+        }}
+      >
+        <h2 className="mb-5 text-xl font-semibold">
+          You are about to raise a ticket against {doctor.hospital} for the item{" "}
+          {activeItem?.name}, priced at ₹{activeItem?.price} against
+          exploitation
+        </h2>
+
+        <div className="flex w-full justify-between">
+          <button onClick={() => setActiveItem(null)}>Cancel</button>
+          <button>Raise a Ticket</button>
+        </div>
+      </Modal>
     </>
   );
 };
