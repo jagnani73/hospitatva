@@ -4,10 +4,12 @@ import * as Yup from "yup";
 
 import { Button, Header, Input, Modal } from "../shared";
 import { Controls } from "./";
-import { InventoryProps } from "../../utils/interfaces/manage";
+import { InventoryItem, InventoryProps } from "../../utils/interfaces/manage";
 import { currencyFormatter } from "../../utils/functions";
 
-const Inventory = ({ items }: InventoryProps) => {
+const Inventory = ({ items: initialItems }: InventoryProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [items, setItems] = useState<InventoryItem[]>(initialItems);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [modal, setModal] = useState<{
     visible: boolean;
@@ -16,10 +18,29 @@ const Inventory = ({ items }: InventoryProps) => {
 
   const CommodityValidationSchema = Yup.object({
     name: Yup.string().trim().required(),
-    total: Yup.number().required(),
-    available: Yup.number().required(),
-    cost: Yup.number().required(),
+    total: Yup.number().required().min(1),
+    available: Yup.number().required().min(1),
+    cost: Yup.number().required().min(1),
   });
+
+  const handleSubmit = async (values: Partial<InventoryItem>) => {
+    try {
+      setLoading(true);
+      if (modal.context === "add") {
+        setItems([...items, values as InventoryItem]);
+      } else if (modal.context === "edit") {
+        setItems([
+          ...items.filter((item) => item.id !== values.id),
+          values as InventoryItem,
+        ]);
+      }
+      setSelectedIds([]);
+      setModal({ ...modal, visible: false });
+    } catch (err) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAdd = () => {
     setModal({ visible: true, context: "add" });
@@ -30,7 +51,15 @@ const Inventory = ({ items }: InventoryProps) => {
   };
 
   const handleDelete = () => {
-    console.log("Delete");
+    setItems((prevState) => {
+      const newState: InventoryItem[] = [];
+      prevState.forEach((item) => {
+        if (!selectedIds.find((id) => id === item.id)) {
+          newState.push(item);
+        }
+      });
+      return newState;
+    });
   };
 
   const handleCheck =
@@ -45,11 +74,11 @@ const Inventory = ({ items }: InventoryProps) => {
 
   return (
     <section className="mx-auto mt-28 flex max-w-5xl flex-col items-center p-4">
-      <div className="relative mb-16 w-full max-w-sm">
-        <input
+      {/* <div className="relative mb-16 w-full max-w-sm">
+         <input
           placeholder="Search commodities"
           className="w-full rounded-md border-2 border-accent-hospital-start bg-primaryDark px-4 py-2 pr-10 text-secondary shadow-inner outline-none"
-        />
+        /> 
         <svg
           width="18"
           height="18"
@@ -64,7 +93,7 @@ const Inventory = ({ items }: InventoryProps) => {
             fillOpacity="0.5"
           />
         </svg>
-      </div>
+      </div> */}
       <div className="mb-8 flex w-full flex-wrap items-center gap-6">
         <Header type="secondary" className="mb-0">
           Inventory
@@ -81,9 +110,7 @@ const Inventory = ({ items }: InventoryProps) => {
         <table className="box-border w-full table-fixed border-collapse border border-secondary">
           <thead className="bg-gradient-to-b from-accent-hospital-start to-accent-hospital-stop">
             <tr>
-              <th className="w-12 border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
-                {/* <input type="checkbox" /> */}
-              </th>
+              <th className="w-12 border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight"></th>
               <th className="border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
                 Item Name
               </th>
@@ -91,7 +118,7 @@ const Inventory = ({ items }: InventoryProps) => {
                 Availability
               </th>
               <th className="border-collapse border border-secondary py-2 px-1 font-semibold text-primaryLight">
-                Cost (in ₹)
+                Cost
               </th>
             </tr>
           </thead>
@@ -116,13 +143,15 @@ const Inventory = ({ items }: InventoryProps) => {
         </table>
       </div>
       <Modal
-        isOpen={modal.visible}
+        isOpen={modal?.visible}
         enterAnimation="fade-right"
         exitAnimation="fade-right"
         onClose={() => setModal((state) => ({ ...state, visible: false }))}
         titleElement={
           <h3 className="text-lg font-medium">
-            {modal.context === "add" ? "Create new entry" : "Edit item details"}
+            {modal?.context === "add"
+              ? "Create new entry"
+              : "Edit item details"}
           </h3>
         }
         classNames={{
@@ -132,13 +161,21 @@ const Inventory = ({ items }: InventoryProps) => {
         }}
       >
         <h2 className="mb-5 text-xl font-semibold">
-          {modal.context === "add" ? "Create new" : "Edit item"}
+          {modal?.context === "add" ? "Create new" : "Edit item"}
         </h2>
+
         <Formik
-          initialValues={{ email: "" }}
-          onSubmit={(values) => {
-            console.log("LOL", values);
-          }}
+          initialValues={
+            modal?.context === "add"
+              ? {}
+              : {
+                  ...items.find((item) => item.id === selectedIds[0]),
+                  cost:
+                    items.find((item) => item.id === selectedIds[0])?.cost! /
+                    100,
+                }!
+          }
+          onSubmit={handleSubmit}
           validationSchema={CommodityValidationSchema}
         >
           {({ errors, touched, isValid, isSubmitting }) => (
@@ -193,13 +230,13 @@ const Inventory = ({ items }: InventoryProps) => {
                     "bg-primaryLight outline-none outline-none w-full text-secondary px-4 py-2 rounded-md border-2 border-primaryDark focus:border-accent-hospital-start",
                 }}
               />
-              {touched.email && errors.email && (
-                <div className="mt-1 text-base font-semibold text-red-500">
-                  {errors.email}
-                </div>
-              )}
               <footer className="col-span-2 mt-6 flex justify-center gap-4">
-                <Button outlined size="small" type="reset">
+                <Button
+                  outlined
+                  size="small"
+                  type="reset"
+                  onClick={() => setModal({ ...modal, visible: false })}
+                >
                   Cancel
                 </Button>
                 <Button
@@ -207,7 +244,30 @@ const Inventory = ({ items }: InventoryProps) => {
                   disabled={!isValid || isSubmitting}
                   type="submit"
                 >
-                  Confirm
+                  {!loading ? (
+                    "Confirm"
+                  ) : (
+                    <svg
+                      className="h-5 w-5 animate-spin text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                  )}
                 </Button>
               </footer>
             </Form>

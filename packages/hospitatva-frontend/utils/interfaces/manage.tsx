@@ -16,7 +16,6 @@ export interface InventoryItem {
 
 export interface InventoryProps {
   items: InventoryItem[];
-  setWalletAddress: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export interface AuthProps {

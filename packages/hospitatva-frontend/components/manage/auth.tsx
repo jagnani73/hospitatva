@@ -38,7 +38,6 @@ const Auth = ({ setWalletAddress }: AuthProps) => {
       // @ts-ignore
       const { address } = await magic.zilliqa.getWallet();
       setWalletAddress(address);
-      sessionStorage.setItem("walletAddress", address);
 
       if (token) {
         const res = await postMagicToken(token, values["email"]);
