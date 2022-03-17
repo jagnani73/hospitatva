@@ -1,4 +1,5 @@
 export interface SummaryProps {
+  paid: boolean;
   summary_id: string;
   date: string;
   patient: {
