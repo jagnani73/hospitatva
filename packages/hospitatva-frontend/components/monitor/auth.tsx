@@ -23,58 +23,62 @@ const Auth = ({ setWalletAddress }: AuthProps) => {
   const handleSubmit = async (values: { email: string }) => {
     try {
       setLoading(true);
-      const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_API_KEY!, {
-        extensions: [
-          new ZilliqaExtension({
-            rpcUrl: "https://dev-api.zilliqa.com/",
-          }),
-        ],
-      });
-      const token = await magic.auth.loginWithMagicLink({
-        email: values["email"],
-        showUI: true,
-      });
+      // const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_API_KEY!, {
+      //   extensions: [
+      //     new ZilliqaExtension({
+      //       rpcUrl: "https://dev-api.zilliqa.com/",
+      //     }),
+      //   ],
+      // });
+      // const token = await magic.auth.loginWithMagicLink({
+      //   email: values["email"],
+      //   showUI: true,
+      // });
 
-      // @ts-ignore
-      const { address } = await magic.zilliqa.getWallet();
-      setWalletAddress(address);
-      sessionStorage.setItem("walletAddress", address);
+      // // @ts-ignore
+      // const { address } = await magic.zilliqa.getWallet();
+      // setWalletAddress(address);
+      // sessionStorage.setItem("walletAddress", address);
 
-      if (token) {
-        const res = await postMagicToken(token, values["email"]);
+      // if (token) {
+      //   const res = await postMagicToken(token, values["email"]);
 
-        if (res) {
-          await magic.zilliqa.callContract(
-            "AddItem",
-            [
-              {
-                vname: "listing_data_name",
-                type: "String",
-                value: "Commodity One",
-              },
-              {
-                vname: "listing_data_price",
-                type: "Uint256",
-                value: "9000",
-              },
-            ],
-            {
-              version: bytes.pack(333, 1),
-              amount: new BN(0),
-              gasPrice: units.toQa("5000", units.Units.Li),
-              gasLimit: Long.fromNumber(40000),
-            },
-            33,
-            1000,
-            false,
-            "0xe7dcf9184d66746dd5e01509c65f7255fb19db9c"
-          );
-        }
-      }
+      //   if (res) {
+      //     await magic.zilliqa.callContract(
+      //       "AddItem",
+      //       [
+      //         {
+      //           vname: "listing_data_name",
+      //           type: "String",
+      //           value: "Commodity One",
+      //         },
+      //         {
+      //           vname: "listing_data_price",
+      //           type: "Uint256",
+      //           value: "9000",
+      //         },
+      //       ],
+      //       {
+      //         version: bytes.pack(333, 1),
+      //         amount: new BN(0),
+      //         gasPrice: units.toQa("5000", units.Units.Li),
+      //         gasLimit: Long.fromNumber(40000),
+      //       },
+      //       33,
+      //       1000,
+      //       false,
+      //       "0xe7dcf9184d66746dd5e01509c65f7255fb19db9c"
+      //     );
+      //   }
+      // }
+
+      setTimeout(() => {
+        setWalletAddress("0xABCD1234");
+      }, 2000);
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 

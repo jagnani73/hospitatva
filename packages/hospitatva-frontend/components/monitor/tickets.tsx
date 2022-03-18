@@ -13,14 +13,21 @@ const Tickets = ({ activeTickets }: TicketsProps) => {
     ticket: Ticket;
     context: "resolve" | "reject";
   } | null>(null);
+  const [discarded, setDiscarded] = useState<Ticket[]>([]);
 
+  const parsedTickets: Ticket[] = [];
+  activeTickets.map((item) => {
+    if (!discarded.find((t) => t.id === item.id)) {
+      parsedTickets.push(item);
+    }
+  });
   return (
     <section className="mx-auto mt-28 max-w-5xl p-4">
       <Header type="secondary" className="mb-0">
         Active Tickets
       </Header>
       <div className="mt-8">
-        {activeTickets.map((ticket) => (
+        {parsedTickets.map((ticket) => (
           <article className="mb-4 rounded-md border-2 border-accent-admin-stop px-4 py-4 transition-transform last:mb-0 hover:scale-105">
             <div>
               Ticket raised for <strong>{ticket.commodityName}</strong> as
@@ -89,6 +96,8 @@ const Tickets = ({ activeTickets }: TicketsProps) => {
           <Button
             onClick={() => {
               // call the apis, do the magic
+              setDiscarded((state) => [...state, modalData?.ticket!]);
+              setModalData(null);
             }}
             size="small"
           >
