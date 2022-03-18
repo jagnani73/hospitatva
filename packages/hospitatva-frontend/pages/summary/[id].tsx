@@ -24,6 +24,7 @@ export async function getServerSideProps({
 
   return {
     props: {
+      paid: false,
       summary_id: "ABCD1234",
       date: Date.now().toString(),
       patient: {

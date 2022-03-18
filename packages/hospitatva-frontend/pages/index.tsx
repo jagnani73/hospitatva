@@ -1,6 +1,7 @@
 import type { GetServerSidePropsResult, NextPage } from "next";
 
 import { Home } from "../components/home";
+import { getHospitals } from "../services/rest";
 import { Hospitals } from "../utils/dummy-data/home";
 import { HomeProps } from "../utils/interfaces/home";
 
@@ -17,9 +18,17 @@ export default HomePage;
 export async function getServerSideProps(): Promise<
   GetServerSidePropsResult<HomeProps>
 > {
-  return {
-    props: {
-      hospitals: Hospitals,
-    },
-  };
+  try {
+    const newHospitals = await getHospitals();
+
+    return {
+      props: {
+        hospitals: [...newHospitals, ...Hospitals],
+      },
+    };
+  } catch (err) {
+    return {
+      notFound: true,
+    };
+  }
 }

@@ -5,7 +5,7 @@ import { BN, units, bytes, Long } from "@zilliqa-js/zilliqa";
 
 import { SummaryProps } from "../../utils/interfaces/summary";
 import { Button, Header, Modal } from "../shared";
-import { postMagicToken } from "../../services/rest";
+import { postMagicToken, postTicket } from "../../services/rest";
 
 const Summary = ({
   date,
@@ -17,6 +17,8 @@ const Summary = ({
 }: SummaryProps) => {
   const [paid, setPaid] = useState<boolean>(initiallyPaid);
   const [loading, setLoading] = useState<boolean>(false);
+  const [t_loading, setT_Loading] = useState<boolean>(false);
+  const [activeTicket, setActiveTicket] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<{
     name: string;
     quantity: number;
@@ -44,29 +46,30 @@ const Summary = ({
 
         if (res) {
           await magic.zilliqa.callContract(
-            "AddItem",
+            "AdmitPatient",
             [
               {
-                vname: "listing_data_name",
-                type: "String",
-                value: "Commodity One",
-              },
-              {
-                vname: "listing_data_price",
-                type: "Uint256",
-                value: "9000",
+                vname: "cart",
+                type: "List (Pair (Uint256) (Uint256))",
+                value: [
+                  {
+                    constructor: "Pair",
+                    argtypes: ["Uint256", "Uint256"],
+                    arguments: ["1", "111"],
+                  },
+                ],
               },
             ],
             {
               version: bytes.pack(333, 1),
-              amount: new BN(0),
+              amount: new BN(1000),
               gasPrice: units.toQa("5000", units.Units.Li),
               gasLimit: Long.fromNumber(40000),
             },
             33,
             1000,
             false,
-            "0xe7dcf9184d66746dd5e01509c65f7255fb19db9c"
+            "0x2eec150b5d18805c78c4ee06a10fa74b2d336272"
           );
 
           setPaid(true);
@@ -76,6 +79,19 @@ const Summary = ({
       console.log(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const ticketHandler = async () => {
+    try {
+      setT_Loading(true);
+      await postTicket(activeItem!, doctor.name, doctor.hospital);
+      setActiveItem(null);
+      setActiveTicket(true);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setT_Loading(false);
     }
   };
 
@@ -182,39 +198,45 @@ const Summary = ({
           </p>
         </div>
 
-        {!paid ? (
-          <div className="mt-8 flex justify-center">
-            <Button onClick={handlePayment} disabled={loading}>
-              {!loading ? (
-                "Accept & Pay"
-              ) : (
-                <svg
-                  className="h-5 w-5 animate-spin text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              )}
-            </Button>
-          </div>
+        {!activeTicket ? (
+          !paid ? (
+            <div className="mt-8 flex justify-center">
+              <Button onClick={handlePayment} disabled={loading}>
+                {!loading ? (
+                  "Accept & Pay"
+                ) : (
+                  <svg
+                    className="h-5 w-5 animate-spin text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                )}
+              </Button>
+            </div>
+          ) : (
+            <figure className="ml-auto mt-8 flex w-1/4">
+              <img src="/paid.png" alt="" />
+            </figure>
+          )
         ) : (
-          <figure className="ml-auto mt-8 flex w-1/4">
-            <img src="/paid.png" alt="" />
-          </figure>
+          <h4 className="text-center font-semibold">
+            TICKET CREATED FOR EXPLOITATION
+          </h4>
         )}
 
         <p className="mt-20 text-center text-sm font-bold">
@@ -241,8 +263,33 @@ const Summary = ({
         </h2>
 
         <div className="flex w-full justify-between">
-          <button onClick={() => setActiveItem(null)}>Cancel</button>
-          <button>Raise a Ticket</button>
+          {!t_loading ? (
+            <>
+              <button onClick={() => setActiveItem(null)}>Cancel</button>
+              <button onClick={ticketHandler}>Raise a Ticket</button>
+            </>
+          ) : (
+            <svg
+              className="mx-auto h-5 w-5 animate-spin text-black"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          )}
         </div>
       </Modal>
     </>

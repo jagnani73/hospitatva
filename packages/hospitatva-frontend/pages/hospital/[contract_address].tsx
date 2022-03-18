@@ -5,7 +5,7 @@ import type {
 } from "next";
 
 import { Hospital } from "../../components/hospital";
-import { Hospitals } from "../../utils/dummy-data/home";
+import { DetailedHospitals } from "../../utils/dummy-data/home";
 import { HospitalProps } from "../../utils/interfaces/hospital";
 
 const HospitalPage: NextPage<HospitalProps> = (hospital) => {
@@ -26,7 +26,7 @@ export async function getServerSideProps({
   const { contract_address } = query;
 
   return {
-    props: Hospitals.find(
+    props: DetailedHospitals.find(
       (hospital) => hospital.contract_address === contract_address
     )!,
   };
