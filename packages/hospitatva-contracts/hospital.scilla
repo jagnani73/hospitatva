@@ -204,7 +204,17 @@ end
 transition AdmitPatient(cart: List (Pair Uint256 Uint256))
   accept;
   forall cart ConsumeCommodity;
-  
+  curr_block <- & BLOCKNUMBER;
+  invoice = {
+    _eventname: "NewInvoiceGenerated";
+    hospital: _this_address;
+    patient: _sender;
+    amount_paid: _amount;
+    cart: cart;
+    time_epoch: curr_block
+  };
+  event invoice;
+
   e = {
     _eventname: "AdmitPatient";
     cart: cart;
