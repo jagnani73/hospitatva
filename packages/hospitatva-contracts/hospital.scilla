@@ -3,44 +3,212 @@
 (***************************************************)
 
 scilla_version 0
+import BoolUtils ListUtils IntUtils PairUtils
 
 (***************************************************)
 (*               Associated library                *)
 (***************************************************)
 
-library MyContractLib
+library HospitavaHospital
 
 
 (* Library code block follows *)
+let true = True
+let false = False
+let one = Uint256 1
+type ContractErrors = 
+    | NotPausedError
+    | PausedError
+    | NotOwnerError
+    | ItemDoesNotExist
+    | InternalServerError
 
+let create_pair =
+fun(availibility: Uint256) =>
+fun(price: Uint256) =>
+    let prc = price in
+    Pair {Uint256 Uint256} availibility prc
 
+let one_msg = 
+  fun (msg: Message) => 
+    let nil_msg = Nil {Message} in
+    Cons {Message} msg nil_msg
+
+let throw_err =
+    fun (err : ContractErrors) => 
+        let error_code =
+            match err with
+                | NotPausedError => Int32 -1
+                | PausedError => Int32 -2
+                | NotOwnerError => Int32 -3
+                | ItemDoesNotExist => Int32 -4
+                | InternalServerError => Int32 -5
+             end
+        in
+        { _exception: "Error"; code: error_code }
 
 (***************************************************)
 (*             Contract definition                 *)
 (***************************************************)
 
-contract MyContract
+contract HospitavaHospital
 
 (* Immutable fields declaration *)
 
-(vname_1 : vtype_1,
- vname_2 : vtype_2)
+(
+  initial_contract_owner: ByStr20,
+  hospital_name: String,
+  hospital_geolocation: Map String String,
+  initial_listing_data: Map Uint256 (Pair Uint256 Uint256),
+  metadata_uri: String,
+  price_list_address: ByStr20
+)
 
 (* Mutable fields declaration *)
 
-field vname_1 : vtype_1 = init_val_1
-field vname_2 : vtype_2 = init_val_2
+field contract_owner : ByStr20 = initial_contract_owner
+field paused: Bool = False
+field entity_name: String = hospital_name
+field entity_geolocation: Map String String = hospital_geolocation
+field entity_listing: Map Uint256 (Pair Uint256 Uint256) = initial_listing_data
+field metadata_link: String = metadata_uri
+field price_list_contract: ByStr20 = price_list_address
+
+(* Procedures *)
+
+procedure Throw(error: ContractErrors)
+    e = throw_err error;
+    throw e
+end
+
+procedure RequireOwner()
+    curr_owner <- contract_owner;
+    is_contract_owner = builtin eq curr_owner _sender;
+    match is_contract_owner with
+        | True =>
+        | False =>
+            error = NotOwnerError;
+            Throw error
+    end
+end
+
+procedure RequireNotPaused()
+    is_paused <- paused;
+    match is_paused with
+        | False =>
+        | True =>
+            error = PausedError;
+            Throw error
+    end      
+end
+
+procedure RequirePaused()
+  is_paused <- paused;
+  match is_paused with
+  | True =>
+  | False =>
+    error = NotPausedError;
+    Throw error
+  end
+end
+
+procedure CheckIfCommodityExists(id: Uint256)
+  pricelist <- price_list_contract;
+  maybe_pricelist <- & pricelist as ByStr20 with contract field price_list: Map Uint256 (Pair String Uint256) end;
+  match maybe_pricelist with
+    | None =>
+      error = InternalServerError;
+      Throw error
+    | Some pricelist_contract =>
+      maybe_comm_exists <- & exists pricelist_contract.price_list[id];
+      match maybe_comm_exists with
+        | True =>
+        | False =>
+          error = ItemDoesNotExist;
+          Throw error
+       end
+   end
+end
+
+procedure UpdateCommodityDetails(comm_id: Uint256, comm_availibilty: Uint256, comm_price: Uint256)
+  comm_pair = create_pair comm_availibilty comm_price;
+  entity_listing[comm_id] := comm_pair
+end
+
 
 (* Transitions *)
 
 
-(* Transition signature *)
-transition firstTransition (param_1 : type_1, param_2 : type_2)
-  (* Transition body *)
+(* Pauses the contract as a circuit-breaker mechanism. *)
 
+transition Pause()
+    RequireNotPaused;
+    RequireOwner;
+    paused := true;
+
+    e = {
+        _eventname: "Pause";
+        paused: true
+    };
+    event e
 end
 
-transition secondTransition (param_1: type_1)
-  (* Transition body *)
+(* Unpauses the contract. *)
 
+transition Unpause()
+    RequirePaused;
+    RequireOwner;
+    paused := false;
+
+    e = {
+        _eventname: "Unpause";
+        paused: false
+    };
+    event e
+end
+
+(* Updates the commodity listing for a hospital *)
+
+transition UpdateCommodity(comm_id: Uint256, comm_availibilty: Uint256, comm_price: Uint256)
+  RequireNotPaused;
+  RequireOwner;    
+  CheckIfCommodityExists comm_id;
+  UpdateCommodityDetails comm_id comm_availibilty comm_price;
+
+  e = {
+    _eventname: "UpdateCommodity";
+    updated_id: comm_id;
+    updated_availibilty: comm_availibilty;
+    updated_price: comm_price
+  };
+  event e
+end
+
+transition AdmitPatient(cart: List (Pair Uint256 Uint256))
+  
+  accumulator = @list_foldl Uint256 (Pair Uint256 Uint256);
+  contract_lists <- entity_listing;
+  total_price =
+    let init = Uint256 0 in
+    let fst_uint = @fst Uint256 (Uint256) in
+    let snd_uint = @snd Uint256 (Uint256) in
+    let addition =
+      fun(b: Pair Uint256 Uint256) =>
+      fun(a: Uint256) =>
+        let id = fst_uint b in
+        let quant = snd_uint b in
+        let maybe_price_pair = builtin get contract_lists id in
+        let price_pair =
+          match maybe_price_pair with
+            | Some prc_pair => prc_pair
+           end
+        in
+        let price = snd_uint price_pair in
+        builtin mul price quant in
+    accumulator addition init cart;
+  e = {
+    _eventname: "AdmitPatient";
+    price_paid: total_price
+  };
+  event e
 end
