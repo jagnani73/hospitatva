@@ -10,6 +10,7 @@ export interface HospitalProps {
     count: number;
     available: number;
     price: number;
+    projectedPrice: number;
   }[];
   marker: { latitude: number; longitude: number };
 }

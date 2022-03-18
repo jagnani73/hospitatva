@@ -45,19 +45,27 @@ const Hero = ({
             <th className="border-patient-secondary border-2 p-1 px-4">
               Price
             </th>
+            <th className="border-patient-secondary border-2 p-1 px-4">
+              Projected Price
+            </th>
           </tr>
         </thead>
         <tbody className="mt-10">
-          {commodities.map(({ count, available, name, price }) => (
-            <tr key={name}>
-              <td className="p-1 px-4">{name}</td>
-              <td className="p-1 px-4 text-center">{count}</td>
-              <td className="p-1 px-4 text-center">{available}</td>
-              <td className="p-1 px-4 text-center">
-                {currencyFormatter.format(price / 100)}
-              </td>
-            </tr>
-          ))}
+          {commodities.map(
+            ({ count, available, name, price, projectedPrice }) => (
+              <tr key={name}>
+                <td className="p-1 px-4">{name}</td>
+                <td className="p-1 px-4 text-center">{count}</td>
+                <td className="p-1 px-4 text-center">{available}</td>
+                <td className="p-1 px-4 text-center">
+                  {currencyFormatter.format(price / 100)}
+                </td>
+                <td className="p-1 px-4 text-center">
+                  {currencyFormatter.format(projectedPrice / 100)}
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </table>
     </section>
