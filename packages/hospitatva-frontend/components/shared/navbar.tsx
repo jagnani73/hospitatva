@@ -1,4 +1,6 @@
 import { useRouter } from "next/router";
+import Link from "next/link";
+
 import { ROUTES } from "../../utils/constants";
 
 const Navbar = () => {
@@ -17,12 +19,20 @@ const Navbar = () => {
           : "from-accent-patient-start to-accent-patient-stop"
       } px-20 py-2`}
     >
-      <figure className="flex w-20 items-center">
-        <img src="https://picsum.photos/200" alt="" className="h-auto w-10" />
-        <figcaption className="text-patient-primary ml-4 text-2xl font-semibold text-primaryLight">
-          Hospitatva
-        </figcaption>
-      </figure>
+      <Link href={ROUTES.HOME}>
+        <a>
+          <figure className="flex w-20 items-center">
+            <img
+              src="https://picsum.photos/200"
+              alt=""
+              className="h-auto w-10"
+            />
+            <figcaption className="text-patient-primary ml-4 text-2xl font-semibold text-primaryLight">
+              HOSPITATVA
+            </figcaption>
+          </figure>
+        </a>
+      </Link>
     </nav>
   );
 };

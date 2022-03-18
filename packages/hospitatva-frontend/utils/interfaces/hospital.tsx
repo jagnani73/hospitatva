@@ -1,12 +1,14 @@
 import { COMMODITIES } from "../constants";
-import { CardProps } from "./home";
 
-export interface HospitalProps extends Omit<CardProps, "commodities"> {
+export interface HospitalProps {
+  contract_address: string;
+  name: string;
+  address: [string, string, string];
   specialists: string[];
   commodities: {
     name: COMMODITIES;
     count: number;
-    in_use: number;
+    available: number;
     price: number;
   }[];
   marker: { latitude: number; longitude: number };

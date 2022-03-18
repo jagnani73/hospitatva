@@ -1,8 +1,8 @@
 export enum COMMODITIES {
-  BEDS = "Beds",
-  VENTILATORS = "Ventilators",
-  OXYGEN_CYLINDERS = "Oxygen cylinders",
-  FLUIDS = "Fluids",
+  E_SEMI_FOWLER_BED = "E Semi Fowler Bed",
+  GATCH_BED = "Gatch Bed",
+  OXYGEN_CYLINDERS_20L = "20L Oxygen Cylinders",
+  OXYGEN_CYLINDERS_40L = "40L Oxygen Cylinders",
 }
 
 export enum ROUTES {

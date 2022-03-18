@@ -1,16 +1,9 @@
-import { COMMODITIES } from "../constants";
-
-export interface CardProps {
-  contract_address: string;
-  name: string;
-  address: [string, string, string];
-  commodities: COMMODITIES[];
-}
+import { HospitalProps } from "./hospital";
 
 export interface HeroProps {
-  hospitals: CardProps[];
+  hospitals: HospitalProps[];
 }
 
 export interface HomeProps {
-  hospitals: CardProps[];
+  hospitals: HospitalProps[];
 }

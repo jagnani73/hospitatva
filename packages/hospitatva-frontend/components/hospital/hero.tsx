@@ -47,11 +47,11 @@ const Hero = ({
           </tr>
         </thead>
         <tbody className="mt-10">
-          {commodities.map(({ count, in_use, name, price }) => (
+          {commodities.map(({ count, available, name, price }) => (
             <tr key={name}>
               <td className="p-1 px-4">{name}</td>
               <td className="p-1 px-4 text-center">{count}</td>
-              <td className="p-1 px-4 text-center">{in_use}</td>
+              <td className="p-1 px-4 text-center">{available}</td>
               <td className="p-1 px-4 text-center">{price}</td>
             </tr>
           ))}

@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { ROUTES } from "../../utils/constants";
 
-import { CardProps } from "../../utils/interfaces/home";
+import { HospitalProps } from "../../utils/interfaces/hospital";
 
-const Card = ({ address, commodities, name, contract_address }: CardProps) => {
+const Card = ({
+  address,
+  commodities,
+  name,
+  contract_address,
+}: HospitalProps) => {
   return (
     <Link href={`${ROUTES.HOSPITAL}/${contract_address}`}>
       <a>
@@ -16,10 +21,10 @@ const Card = ({ address, commodities, name, contract_address }: CardProps) => {
           <p className="mt-2 flex flex-wrap items-center gap-1">
             {commodities.slice(0, 4).map((commodity) => (
               <span
-                key={commodity}
+                key={commodity.name}
                 className="mt-1 whitespace-nowrap rounded-full bg-gradient-to-r from-accent-patient-start to-accent-patient-stop py-1 px-2 text-xs capitalize text-white first:ml-0"
               >
-                {commodity}
+                {commodity.name}
               </span>
             ))}
             {commodities.length > 4 && (
