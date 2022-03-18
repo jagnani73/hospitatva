@@ -1,18 +1,22 @@
 [
   {
     "id": 1,
-    "name": "Bed - Private Room"
-  },
-  {
-    "id": 2,
-    "name": "Bed - General Ward"
+    "name": "Bed - General Ward",
+    "chainName": "bed-general-ward"
   },
   {
     "id": 3,
-    "name": "Oxygen Cylinder - 10 litre"
+    "name": "Bed - Private Room",
+    "chainName": "bed-private-room"
   },
   {
     "id": 4,
-    "name": "Oxygen Cylinder - 20 litre"
+    "name": "Oxygen Cylinder - 10 litre",
+    "chainName": "oxygen-cylinder-10-litre"
+  },
+  {
+    "id": 5,
+    "name": "Oxygen Cylinder - 20 litre",
+    "chainName": "oxygen-cylinder-20-litre"
   }
 ]

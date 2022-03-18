@@ -33,6 +33,8 @@ export default class HospitatvaBackendStack extends sst.Stack {
             id: sst.TableFieldType.STRING,
             updatedAt: sst.TableFieldType.STRING,
             price: sst.TableFieldType.STRING,
+            address: sst.TableFieldType.STRING,
+            available: sst.TableFieldType.STRING,
           },
           primaryIndex: {
             partitionKey: "updatedAt",
@@ -67,6 +69,10 @@ export default class HospitatvaBackendStack extends sst.Stack {
           handler: "src/indexer/indexerCronJob.indexBlocksByTime",
           permissions: [...tableArray],
           environment: { ...tableNameEnv },
+          bundle: {
+            nodeModules: ["@zilliqa-js/zilliqa"],
+            minify: false,
+          },
         },
       },
       schedule: "cron(0/1 * * * ? *)",
@@ -99,12 +105,33 @@ export default class HospitatvaBackendStack extends sst.Stack {
             environment: {
               NONCE_TABLE_NAME: nonceTable.tableName,
             },
+            bundle: {
+              nodeModules: ["@zilliqa-js/zilliqa"],
+              minify: false,
+            },
           },
         },
         "POST /user/magic": {
           function: {
             handler: "src/user/auth/getMagicUserController.handler",
             permissions: [ssmIamPermission],
+            bundle: {
+              nodeModules: ["@zilliqa-js/zilliqa"],
+              minify: false,
+            },
+          },
+        },
+        "GET /hospital": {
+          function: {
+            handler: "src/hospital/getHospitalData.handler",
+            permissions: [nonceTable, ssmIamPermission],
+            environment: {
+              NONCE_TABLE_NAME: nonceTable.tableName,
+            },
+            bundle: {
+              nodeModules: ["@zilliqa-js/zilliqa"],
+              minify: false,
+            },
           },
         },
       },

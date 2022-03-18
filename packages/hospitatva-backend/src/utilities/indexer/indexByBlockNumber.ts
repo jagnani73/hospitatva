@@ -17,18 +17,20 @@ const filterForQualifiedEvents = async (preQualifiedEvents: {
 }) => {
   for (let i = 0; i < preQualifiedEvents.events.length; i++) {
     let event = preQualifiedEvents.events[i];
-    if (
-      event["_eventname"] === "UpdateItem" ||
-      event["address"] === CONTRACT_ADDRESS
-    ) {
+
+    if (event["_eventname"] === "UpdateCommodity") {
       const value = event["params"][0]["value"];
+      console.log(JSON.stringify(event));
+
       await dynamodb
         .put({
           TableName: process.env[`TABLE_NAME_${value}`] as string,
           Item: {
             updatedAt: Date.now().toString(),
-            price: event["params"][1]["value"]["arguments"][1],
+            price: event["params"][2]["value"],
             id: value,
+            address: event["address"],
+            available: event["params"][1]["value"],
           },
         })
         .promise();

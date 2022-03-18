@@ -1,7 +1,9 @@
 import { SSM } from "aws-sdk";
 import axios from "axios";
 import { MongoClient, Db } from "mongodb";
+import { idToChainNameMapper, nameToIdMapper } from "../idMapper";
 import { IndexedBlock } from "../types/customTypes";
+import { updatePriceList } from "../zilliqa/zilliqaService";
 
 let db: Db;
 let ssmResponse;
@@ -87,31 +89,106 @@ export const checkExisitngUser = async (
   }
 };
 
-export const slidingWindowStorage = async (id: number, price: number) => {
+export const slidingWindowStorage = async (
+  id: number,
+  price: number,
+  address: string,
+  available: number
+) => {
   let existingWindow = await (await getDatabase())
     .collection(`sliding-windows`)
-    .findOne<{ id: number; window: number[] }>({ id });
-  if (!existingWindow) existingWindow = { id, window: [] };
+    .findOne<{
+      id: number;
+      window: number[];
+      addresses: string[];
+      count: number[];
+    }>({ id });
+  console.log(existingWindow);
+  if (!existingWindow)
+    existingWindow = { id, window: [], addresses: [], count: [] };
   existingWindow.window.push(price);
+  existingWindow.addresses.push(address);
+  existingWindow.count.push(available);
+  await (await getDatabase())
+    .collection("persistent-hospital-record")
+    .updateOne(
+      { id },
+      {
+        $set: {
+          id: existingWindow.id,
+          window: existingWindow.window,
+          addresses: existingWindow.addresses,
+          count: existingWindow.count,
+        },
+      },
+      { upsert: true }
+    );
   if (existingWindow.window.length == 31) {
     const data = await axios.post("http://139.59.53.149/predict", {
       data_points: existingWindow.window,
     });
     console.log(data.data);
-    return await (await getDatabase())
-      .collection("sliding-windows")
-      .updateOne(
-        { id },
-        { $set: { id: existingWindow.id, window: [] } },
-        { upsert: true }
-      );
-  }
-
-  await (await getDatabase())
-    .collection("sliding-windows")
-    .updateOne(
+    await updatePriceList(
+      (await idToChainNameMapper(id as unknown as string)) as string,
+      data.data.Pred,
+      id as unknown as string
+    );
+    return await (await getDatabase()).collection("sliding-windows").updateOne(
       { id },
-      { $set: { id: existingWindow.id, window: existingWindow.window } },
+      {
+        $set: { id: existingWindow.id, window: [], addresses: [], count: [] },
+      },
       { upsert: true }
     );
+  }
+
+  await (await getDatabase()).collection("sliding-windows").updateOne(
+    { id },
+    {
+      $set: {
+        id: existingWindow.id,
+        window: existingWindow.window,
+        addresses: existingWindow.addresses,
+        count: existingWindow.count,
+      },
+    },
+    { upsert: true }
+  );
+};
+
+export const getInventoryData = async () => {
+  return await (await getDatabase())
+    .collection("inventory")
+    .find<{ id: string; name: string; chainName: string }>({})
+    .toArray();
+};
+
+export const getHospitalData = async () => {
+  let finalData = {};
+  const basicData = await (await getDatabase())
+    .collection("persistent-hospital-record")
+    .findOne<{ id: number; hospitals: any[] }>({ id: 0 });
+  for (let i = 0; i < (basicData?.hospitals as any[]).length; i++) {
+    let hospital = basicData?.hospitals[i];
+    for (let j = 0; j < hospital.commodities.length; j++) {
+      let commodity = hospital.commodities[j];
+      let id = await nameToIdMapper(commodity.name);
+      const data = await (await getDatabase())
+        .collection("persistent-hospital-record")
+        .findOne<{
+          id: number;
+          window: number[];
+          addresses: string[];
+          count: number[];
+        }>({ id });
+      let index = data?.addresses
+        .reverse()
+        .findIndex((element) => element === hospital.contract);
+
+      hospital.commodities[j].available = data?.count[index as number];
+      hospital.commodities[j].price = data?.window[index as number];
+    }
+  }
+  finalData = { hospitals: basicData?.hospitals };
+  return finalData;
 };

@@ -11,7 +11,9 @@ export const handler: DynamoDBStreamHandler = async (event) => {
         const parsedData = parseRecord(record.dynamodb?.NewImage);
         slidingWindowStorage(
           parseInt(parsedData.id),
-          parseInt(parsedData.price)
+          parseInt(parsedData.price),
+          parsedData.address,
+          parseInt(parsedData.available)
         );
       }
     }
