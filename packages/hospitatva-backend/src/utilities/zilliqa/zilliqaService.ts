@@ -21,11 +21,7 @@ export const getWallet = async () => {
   if (!walletPrivateKey) throw `Could not fetch Wallet Private Key`;
 
   return {
-    zilliqa,
-    msgVersion,
-    chainId,
-    gasLimit,
-    gasPrice,
+    walletPrivateKey,
   };
 };
 
@@ -35,7 +31,9 @@ export const updatePriceList = async (
   id: string
 ) => {
   console.log("Update Price List invoked with:", commodityName, price, id);
-
+  const { walletPrivateKey } = await getWallet();
+  const walletAddress = zilliqa.wallet.addByPrivateKey(walletPrivateKey);
+  console.log(`Wallet Address: ${walletAddress}`);
   const args = [
     {
       vname: "listing_data_name",
