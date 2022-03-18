@@ -1,6 +1,7 @@
 import { HospitalProps } from "../../utils/interfaces/hospital";
 import { Map } from "./";
 import { Header } from "../shared";
+import { currencyFormatter } from "../../utils/functions";
 
 const Hero = ({
   name,
@@ -52,7 +53,9 @@ const Hero = ({
               <td className="p-1 px-4">{name}</td>
               <td className="p-1 px-4 text-center">{count}</td>
               <td className="p-1 px-4 text-center">{available}</td>
-              <td className="p-1 px-4 text-center">{price}</td>
+              <td className="p-1 px-4 text-center">
+                {currencyFormatter.format(price / 100)}
+              </td>
             </tr>
           ))}
         </tbody>
