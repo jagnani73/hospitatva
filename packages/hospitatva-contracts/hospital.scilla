@@ -135,6 +135,23 @@ procedure UpdateCommodityDetails(comm_id: Uint256, comm_availibilty: Uint256, co
   entity_listing[comm_id] := comm_pair
 end
 
+procedure ConsumeCommodity(comm: Pair Uint256 Uint256)
+  id = let fst_uint = @fst Uint256 (Uint256) in fst_uint comm;
+  quant = let snd_uint = @snd Uint256 (Uint256) in snd_uint comm;
+  maybe_curr_listing <- entity_listing[id];
+  match maybe_curr_listing with
+    | None =>
+      error = InternalServerError;
+      Throw error
+    | Some curr_listing =>
+      lis_availibility = let fst_uint = @fst Uint256 (Uint256) in fst_uint curr_listing;
+      lis_price = let snd_uint = @snd Uint256 (Uint256) in snd_uint curr_listing;
+      new_availibility = builtin sub lis_availibility quant;
+      updated_lis = Pair{Uint256 Uint256} new_availibility lis_price;
+      entity_listing[id] := updated_lis
+   end  
+end
+
 
 (* Transitions *)
 
@@ -185,30 +202,13 @@ transition UpdateCommodity(comm_id: Uint256, comm_availibilty: Uint256, comm_pri
 end
 
 transition AdmitPatient(cart: List (Pair Uint256 Uint256))
+  accept;
+  forall cart ConsumeCommodity;
   
-  accumulator = @list_foldl Uint256 (Pair Uint256 Uint256);
-  contract_lists <- entity_listing;
-  total_price =
-    let init = Uint256 0 in
-    let fst_uint = @fst Uint256 (Uint256) in
-    let snd_uint = @snd Uint256 (Uint256) in
-    let addition =
-      fun(b: Pair Uint256 Uint256) =>
-      fun(a: Uint256) =>
-        let id = fst_uint b in
-        let quant = snd_uint b in
-        let maybe_price_pair = builtin get contract_lists id in
-        let price_pair =
-          match maybe_price_pair with
-            | Some prc_pair => prc_pair
-           end
-        in
-        let price = snd_uint price_pair in
-        builtin mul price quant in
-    accumulator addition init cart;
   e = {
     _eventname: "AdmitPatient";
-    price_paid: total_price
+    cart: cart;
+    amount_paid: _amount
   };
   event e
 end
