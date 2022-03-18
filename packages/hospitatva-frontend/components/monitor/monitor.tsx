@@ -3,7 +3,7 @@ import { MonitorProps } from "../../utils/interfaces/monitor";
 import { Auth, Tickets } from "./";
 
 const Monitor = ({ activeTickets }: MonitorProps) => {
-  const [walletAddress, setWalletAddress] = useState<string | null>("lahsun");
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   useEffect(() => {
     setWalletAddress(sessionStorage.getItem("walletAddress") ?? null);

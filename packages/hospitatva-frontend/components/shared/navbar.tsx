@@ -28,11 +28,24 @@ const Navbar = () => {
               className="h-auto w-10"
             />
             <figcaption className="text-patient-primary ml-4 text-2xl font-semibold text-primaryLight">
-              HOSPITATVA
+              Hospitatva
             </figcaption>
           </figure>
         </a>
       </Link>
+      <div className="ml-auto flex items-center gap-4">
+        <Link href={ROUTES.HOME}>
+          <a className={!isHospitalManager && !isAdmin ? "underline" : ""}>
+            Public
+          </a>
+        </Link>
+        <Link href={ROUTES.MANAGE}>
+          <a className={isHospitalManager ? "underline" : ""}>Hospitals</a>
+        </Link>
+        <Link href={ROUTES.ADMIN}>
+          <a className={isAdmin ? "underline" : ""}>Supervisors</a>
+        </Link>
+      </div>
     </nav>
   );
 };
