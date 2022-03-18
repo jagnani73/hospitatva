@@ -3,7 +3,7 @@ import { ManageProps } from "../../utils/interfaces/manage";
 import { Auth, Inventory } from "./";
 
 const Manage = ({ items }: ManageProps) => {
-  const [walletAddress, setWalletAddress] = useState<string | null>("null");
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   return (
     <>
