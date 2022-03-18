@@ -22,11 +22,7 @@ const Navbar = () => {
       <Link href={ROUTES.HOME}>
         <a>
           <figure className="flex w-20 items-center">
-            <img
-              src="https://picsum.photos/200"
-              alt=""
-              className="h-auto w-10"
-            />
+            <img src="/logo.png" alt="" className="h-10 w-10" />
             <figcaption className="text-patient-primary ml-4 text-2xl font-semibold text-primaryLight">
               Hospitatva
             </figcaption>
@@ -43,7 +39,7 @@ const Navbar = () => {
           <a className={isHospitalManager ? "underline" : ""}>Hospitals</a>
         </Link>
         <Link href={ROUTES.ADMIN}>
-          <a className={isAdmin ? "underline" : ""}>Supervisors</a>
+          <a className={isAdmin ? "underline" : ""}>Administrator</a>
         </Link>
       </div>
     </nav>
