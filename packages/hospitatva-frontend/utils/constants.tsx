@@ -9,6 +9,7 @@ export enum ROUTES {
   HOME = "/",
   HOSPITAL = "/hospital",
   MANAGE = "/manage",
+  ADMIN = "/admin",
 }
 
 export const EMAIL_SCHEMA =

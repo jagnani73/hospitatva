@@ -14,6 +14,7 @@ module.exports = {
         accent: {
           patient: { start: "#8DC956", stop: "#7CA655" },
           hospital: { start: "#73C1CE", stop: "#4495A2" },
+          admin: { start: "#F9D448", stop: "#F9BD48" },
         },
       },
       fontFamily: {

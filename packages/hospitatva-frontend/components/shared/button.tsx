@@ -5,17 +5,26 @@ import { ButtonProps } from "../../utils/interfaces/shared";
 const Button = ({ size = "normal", outlined, ...args }: ButtonProps) => {
   const router = useRouter();
   const isHospitalManager = router.route.includes(ROUTES.MANAGE);
+  const isAdmin = router.route.includes(ROUTES.ADMIN);
 
   return (
     <button
       {...args}
       className={`cursor-pointer rounded-md ${
         outlined
-          ? "border-2 border-accent-hospital-start text-accent-hospital-start"
+          ? `border-2 ${
+              isHospitalManager
+                ? "border-accent-hospital-start text-accent-hospital-start"
+                : isAdmin
+                ? "border-accent-admin-stop text-accent-admin-stop"
+                : "border-accent-patient-start text-accent-patient-start"
+            }`
           : "bg-gradient-to-r text-primaryLight"
       } disabled:cursor-default ${
         isHospitalManager
           ? "from-accent-hospital-start to-accent-hospital-stop"
+          : isAdmin
+          ? "from-accent-admin-start to-accent-admin-stop"
           : "from-accent-patient-start to-accent-patient-stop"
       } px-6 py-2 ${
         size === "normal" ? "text-lg" : ""

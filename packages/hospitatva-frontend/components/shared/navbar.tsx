@@ -5,12 +5,15 @@ const Navbar = () => {
   const { route } = useRouter();
 
   const isHospitalManager = route.includes(ROUTES.MANAGE);
+  const isAdmin = route.includes(ROUTES.ADMIN);
 
   return (
     <nav
       className={`sticky top-0 left-0 flex w-full bg-gradient-to-r  ${
         isHospitalManager
           ? "from-accent-hospital-start to-accent-hospital-stop"
+          : isAdmin
+          ? "from-accent-admin-start to-accent-admin-stop"
           : "from-accent-patient-start to-accent-patient-stop"
       } px-20 py-2`}
     >

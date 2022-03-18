@@ -5,6 +5,7 @@ import { HeaderProps } from "../../utils/interfaces/shared";
 const Header = ({ type, children, tagline, className = "" }: HeaderProps) => {
   const router = useRouter();
   const isHospitalManager = router.route.includes(ROUTES.MANAGE);
+  const isAdmin = router.route.includes(ROUTES.ADMIN);
 
   switch (type) {
     case "primary": {
@@ -25,6 +26,8 @@ const Header = ({ type, children, tagline, className = "" }: HeaderProps) => {
           className={`mb-8 border-l-4 ${
             isHospitalManager
               ? "border-accent-hospital-start"
+              : isAdmin
+              ? "border-accent-admin-start"
               : "border-accent-patient-start"
           } py-1 pl-2 text-2xl font-semibold ${className}`}
         >
