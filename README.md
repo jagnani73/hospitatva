@@ -61,6 +61,9 @@ A distributed ledger-based blockchain implementation of the rates proposed and c
 <div align="center">
   <img alt="Preview Images" src="docs/preview7.png" />
 </div>
+<div align="center">
+  <img alt="Preview Images" src="docs/preview8.png" />
+</div>
 
 <br>
 
