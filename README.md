@@ -82,16 +82,31 @@ A distributed ledger-based blockchain implementation of the rates proposed and c
 
 # 📦 Inside the box
 
-Ex anim occaecat non mollit elit nostrud ut minim adipisicing cillum velit.
+- **Frontend Server:**
+  - _Public -_ A national information portal that displays hospital information as well as the commodity data of the hospital.
+  - _Hospital -_ `DID` nonce-based authentication using `MagicLink` and `CRUD` commodities for the hospital
+  - _Government -_ `DID` nonce-based authentication using `MagicLink` and resolution of tickets generated
+- **Backend Lambdas:**
+  - Generating nonce-based authentication
+  - `GET` Endpoint for information of hospitals and their commodities
+  - `CRUD` commodities and save it in respective hospital contract
+  - Modify `DynamoDB` tables that track commodity price
+  - Calling a ML endpoint for price prediction for a sliding window of 30 price entries and save the prediction in the global smart contract
+  - Generate a bill/summary with reporting options as per the ML predictions
+- **ML Server:**
+  - Predicts the price in a batch of 30 inputs.
 
-<img alt="System Architecture" src="docs/arch1.jpg" />
+<img alt="User Flow" src="docs/arch1.jpg" />
+<img alt="User Flow" src="docs/arch2.png" />
 
 <br>
 
 # ⏭️ What's next
 
-- Training the model on actual data, currently we are using falsified data due to lack of original data.
-- Making the UI more intuitive and user friendly.
+- Training the model on actual data, currently, we are using falsified data due to a lack of original data.
+- Making the UI more intuitive and user-friendly.
+- Creating an ML executable instead of an API
+- Region-based implementation
 
 <br>
 
